@@ -18,6 +18,17 @@ async function main() {
     },
   })
 
+  const camilo = await prisma.user.upsert({
+    where: { username: 'camilo' },
+    update: {},
+    create: {
+      name: 'Owner',
+      username: 'camilo',
+      password: adminPassword,
+      role: 'ADMIN',
+    },
+  })
+
   const worker = await prisma.user.upsert({
     where: { username: 'worker' },
     update: {},
