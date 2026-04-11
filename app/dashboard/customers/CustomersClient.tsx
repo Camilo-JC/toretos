@@ -41,14 +41,8 @@ export default function CustomersClient({ initialCustomers, role, inventory }: {
   const [isSettleModalOpen, setIsSettleModalOpen] = useState(false)
   const [settleForm, setSettleForm] = useState({ email: '', accountName: '', method: 'Efectivo' })
 
-  const [isMobile, setIsMobile] = useState(false)
-
-  useEffect(() => {
-    const checkMobile = () => setIsMobile(window.innerWidth < 768)
-    checkMobile()
-    window.addEventListener('resize', checkMobile)
-    return () => window.removeEventListener('resize', checkMobile)
-  }, [])
+  // Control de vista en móvil (CSS se encarga del layout, JS del toggle de visibilidad)
+  const [showDetail, setShowDetail] = useState(false)
 
   const [loading, setLoading] = useState(false)
 
@@ -146,6 +140,7 @@ export default function CustomersClient({ initialCustomers, role, inventory }: {
       const updatedCustomer = await resCustomer.json()
       setCustomers(customers.map(c => c.id === updatedCustomer.id ? updatedCustomer : c))
       setSelectedCustomer(null)
+      setShowDetail(false)
       setIsSettleModalOpen(false)
       setSettleForm({ email: '', accountName: '', method: 'Efectivo' })
     } else {
@@ -177,89 +172,80 @@ export default function CustomersClient({ initialCustomers, role, inventory }: {
   }
 
   return (
-    <div style={{ 
-      display: 'grid', 
-      gridTemplateColumns: isMobile ? '1fr' : 'minmax(300px, 1fr) 2fr', 
-      gap: '1.5rem',
-      position: 'relative'
-    }}>
-      {/* List Sidebar - Hidden on mobile if a customer is selected */}
-      {(!isMobile || !selectedCustomer) && (
-        <div className="animate-fade-in" style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <h2 style={{ fontSize: '1.5rem', fontWeight: 'bold' }}>Clientes</h2>
-            <button className="btn btn-secondary" onClick={() => setIsNewCustomerOpen(true)} style={{ padding: '0.6rem' }}>
-              <FiUserPlus size={20} />
-            </button>
-          </div>
-          
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-            {customers.map(c => {
-              const hasDebt = c.debts && c.debts.length > 0 && c.debts[0].subtotal > 0
-              return (
-                <div 
-                  key={c.id} 
-                  className="card" 
-                  style={{ 
-                    cursor: 'pointer', 
-                    border: selectedCustomer?.id === c.id ? '2px solid var(--primary)' : '1px solid var(--border)',
-                    transition: 'transform 0.2s',
-                    transform: selectedCustomer?.id === c.id ? 'scale(1.02)' : 'none'
-                  }}
-                  onClick={() => setSelectedCustomer(c)}
-                >
-                  <div className="card-body" style={{ padding: '1.25rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <div>
-                      <h4 style={{ fontWeight: '600', fontSize: '1.1rem' }}>{c.name}</h4>
-                      <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>{c.document || 'Sin doc.'}</p>
-                    </div>
-                    {hasDebt && (
-                      <span className="badge badge-warning" style={{ fontSize: '0.9rem' }}>{formatCOP(c.debts[0].subtotal)}</span>
-                    )}
-                  </div>
-                </div>
-              )
-            })}
-          </div>
+    <div className={`customers-layout ${showDetail ? 'show-detail' : ''}`}>
+      {/* List Sidebar */}
+      <div className="customers-sidebar animate-fade-in" style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <h2 style={{ fontSize: '1.5rem', fontWeight: 'bold' }}>Clientes</h2>
+          <button className="btn btn-secondary" onClick={() => setIsNewCustomerOpen(true)} style={{ padding: '0.6rem' }}>
+            <FiUserPlus size={20} />
+          </button>
         </div>
-      )}
-
-      {/* Account Detail - Hidden on mobile if no customer is selected */}
-      {(!isMobile || selectedCustomer) && (
-        <div className="card animate-fade-in" style={{ 
-          alignSelf: 'start', 
-          position: isMobile ? 'relative' : 'sticky', 
-          top: isMobile ? '0' : '80px',
-          zIndex: isMobile && selectedCustomer ? 50 : 'auto',
-          minHeight: isMobile ? 'calc(100vh - 160px)' : 'auto'
-        }}>
-          <div className="card-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: isMobile ? '1rem' : '1.25rem 1.5rem' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-              {isMobile && selectedCustomer && (
-                <button 
-                  className="btn-icon" 
-                  onClick={() => setSelectedCustomer(null)}
-                  style={{ background: 'var(--bg-main)', borderRadius: '50%', display: 'flex', border: '1px solid var(--border)' }}
-                >
-                  <FiArrowLeft size={20} />
-                </button>
-              )}
-              <h2 style={{ fontSize: isMobile ? '1.1rem' : '1.25rem', fontWeight: 'bold' }}>
-                {selectedCustomer ? `Cuenta de ${selectedCustomer.name}` : 'Seleccione o cree un cliente'}
-              </h2>
-            </div>
-            {selectedCustomer && role === 'ADMIN' && (
-              <button 
-                className="btn-icon" 
-                onClick={handleDeleteCustomer} 
-                disabled={loading}
-                style={{ color: 'var(--danger)', background: 'none', border: 'none', cursor: 'pointer', padding: '0.25rem' }} 
-                title="Eliminar Cliente"
+        
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+          {customers.map(c => {
+            const hasDebt = c.debts && c.debts.length > 0 && c.debts[0].subtotal > 0
+            return (
+              <div 
+                key={c.id} 
+                className="card" 
+                style={{ 
+                  cursor: 'pointer', 
+                  border: selectedCustomer?.id === c.id ? '2px solid var(--primary)' : '1px solid var(--border)',
+                  transition: 'transform 0.2s',
+                  transform: selectedCustomer?.id === c.id ? 'scale(1.02)' : 'none'
+                }}
+                onClick={() => {
+                  setSelectedCustomer(c)
+                  setShowDetail(true)
+                }}
               >
-                <FiTrash2 size={20} />
-              </button>
-            )}
+                <div className="card-body" style={{ padding: '1.25rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <div>
+                    <h4 style={{ fontWeight: '600', fontSize: '1.1rem' }}>{c.name}</h4>
+                    <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>{c.document || 'Sin doc.'}</p>
+                  </div>
+                  {hasDebt && (
+                    <span className="badge badge-warning" style={{ fontSize: '0.9rem' }}>{formatCOP(c.debts[0].subtotal)}</span>
+                  )}
+                </div>
+              </div>
+            )
+          })}
+        </div>
+      </div>
+
+      {/* Account Detail */}
+      <div className="customers-detail card animate-fade-in" style={{ 
+        alignSelf: 'start', 
+        position: 'sticky', 
+        top: '80px',
+      }}>
+        <div className="card-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+            <button 
+              className="btn-icon mobile-only" 
+              onClick={() => setShowDetail(false)}
+              style={{ background: 'var(--bg-main)', borderRadius: '50%', display: 'flex', border: '1px solid var(--border)' }}
+            >
+              <FiArrowLeft size={20} />
+            </button>
+            <h2 style={{ fontSize: '1.25rem', fontWeight: 'bold' }}>
+              {selectedCustomer ? `Cuenta de ${selectedCustomer.name}` : 'Seleccione o cree un cliente'}
+            </h2>
           </div>
+          {selectedCustomer && role === 'ADMIN' && (
+            <button 
+              className="btn-icon" 
+              onClick={handleDeleteCustomer} 
+              disabled={loading}
+              style={{ color: 'var(--danger)', background: 'none', border: 'none', cursor: 'pointer', padding: '0.25rem' }} 
+              title="Eliminar Cliente"
+            >
+              <FiTrash2 size={20} />
+            </button>
+          )}
+        </div>
         
         <div className="card-body" style={{ minHeight: '300px' }}>
           {selectedCustomer ? (
@@ -487,7 +473,7 @@ export default function CustomersClient({ initialCustomers, role, inventory }: {
                 </div>
                 
                 <button className="btn btn-primary" type="submit" disabled={loading} style={{ width: '100%', marginTop: '0.5rem', backgroundColor: 'var(--success)' }}>
-                  {loading ? 'Procesando...' : 'Confirmar Pago'}
+                  {loading ? 'Procesando...' : 'CONFIRMAR PAGO Y ENVIAR'}
                 </button>
               </form>
             </div>
@@ -496,8 +482,32 @@ export default function CustomersClient({ initialCustomers, role, inventory }: {
       )}
 
       <style jsx>{`
+        .customers-layout {
+          display: grid;
+          grid-template-columns: minmax(300px, 1fr) 2fr;
+          gap: 1.5rem;
+          position: relative;
+        }
+        .mobile-only {
+          display: none;
+        }
         @media (max-width: 768px) {
-          div[style*="display: 'grid'"] { grid-template-columns: 1fr !important; }
+          .customers-layout {
+            grid-template-columns: 1fr;
+            display: block;
+          }
+          .mobile-only {
+            display: flex;
+          }
+          .customers-sidebar {
+            display: ${showDetail ? 'none' : 'flex'} !important;
+          }
+          .customers-detail {
+            display: ${showDetail ? 'block' : 'none'} !important;
+            min-height: calc(100vh - 160px);
+            position: relative;
+            top: 0;
+          }
         }
       `}</style>
     </div>
