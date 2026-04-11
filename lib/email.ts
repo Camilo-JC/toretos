@@ -14,6 +14,7 @@ const transporter = nodemailer.createTransport({
  * Envía un correo electrónico de prueba o general.
  */
 export async function sendEmail({ to, subject, html }: { to: string; subject: string; html: string }) {
+  console.log(`[EMAIL_ATTEMPT] Destinatario: ${to}, Asunto: ${subject}`);
   try {
     const info = await transporter.sendMail({
       from: `"Los Toreto" <${process.env.SMTP_USER}>`,
@@ -21,10 +22,10 @@ export async function sendEmail({ to, subject, html }: { to: string; subject: st
       subject,
       html,
     });
-    console.log('[EMAIL_SENT]', info.messageId);
+    console.log('[EMAIL_SUCCESS] ID:', info.messageId);
     return { success: true, messageId: info.messageId };
   } catch (error) {
-    console.error('[EMAIL_ERROR]', error);
+    console.error('[EMAIL_FATAL_ERROR] Fallo al enviar:', error);
     return { success: false, error };
   }
 }
@@ -32,18 +33,18 @@ export async function sendEmail({ to, subject, html }: { to: string; subject: st
 /**
  * Plantilla para enviar el código de recuperación al administrador.
  */
-export async function sendRecoveryCode(email: string, code: string) {
+export async function sendRecoveryCode(email: string, code: string, targetUsername: string) {
   return sendEmail({
     to: email,
-    subject: 'Código de Recuperación - Los Toreto',
+    subject: `Recuperar Acceso: @${targetUsername} - Los Toreto`,
     html: `
       <div style="font-family: sans-serif; max-width: 500px; margin: auto; padding: 20px; border: 1px solid #eee; border-radius: 10px;">
         <h2 style="color: #4338ca; text-align: center;">Control de Acceso - Los Toreto</h2>
-        <p>Se ha solicitado un código para restablecer una contraseña en el sistema.</p>
+        <p>El usuario <strong>@${targetUsername}</strong> ha solicitado un código para restablecer su contraseña.</p>
         <div style="background: #f3f4f6; padding: 20px; text-align: center; border-radius: 8px; margin: 20px 0;">
           <span style="font-size: 24px; font-weight: bold; letter-spacing: 5px; color: #111827;">${code}</span>
         </div>
-        <p style="font-size: 14px; color: #6b7280;">Este código expirará en 15 minutos. Si no solicitaste este cambio, puedes ignorar este correo.</p>
+        <p style="font-size: 14px; color: #6b7280;">Si tú no autorizaste este cambio, no compartas este código con nadie.</p>
         <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;">
         <p style="font-size: 12px; color: #9ca3af; text-align: center;">Seguridad Los Toreto v3.0</p>
       </div>

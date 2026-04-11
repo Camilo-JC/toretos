@@ -33,7 +33,7 @@ export async function POST(request: Request) {
 
     // Enviar el correo al administrador (Camilo)
     const adminEmail = process.env.ADMIN_EMAIL || 'camilojc1725@gmail.com'
-    await sendRecoveryCode(adminEmail, code)
+    await sendRecoveryCode(adminEmail, code, user.username)
 
     return NextResponse.json({ 
       success: true, 
