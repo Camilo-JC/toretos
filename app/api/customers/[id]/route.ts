@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 import prisma from '@/lib/prisma'
 
-export async function GET(request: Request, { params }: { params: { id: string } }) {
+export async function GET(request: Request, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
   
   const customer = await prisma.customer.findUnique({
@@ -21,7 +21,7 @@ export async function GET(request: Request, { params }: { params: { id: string }
 
 import { getSession } from '@/lib/session'
 
-export async function DELETE(request: Request, { params }: { params: { id: string } }) {
+export async function DELETE(request: Request, { params }: { params: Promise<{ id: string }> }) {
   const session = await getSession()
   if (session?.role !== 'ADMIN') {
     return NextResponse.json({ error: 'Solo el administrador puede eliminar clientes' }, { status: 403 })
