@@ -1,31 +1,40 @@
-import nodemailer from 'nodemailer';
-
-const transporter = nodemailer.createTransport({
-  host: process.env.SMTP_HOST || 'smtp-relay.brevo.com',
-  port: parseInt(process.env.SMTP_PORT || '587'),
-  secure: false, // true for 465, false for other ports
-  auth: {
-    user: process.env.SMTP_USER,
-    pass: process.env.SMTP_PASS,
-  },
-});
-
 /**
- * Envía un correo electrónico de prueba o general.
+ * Envia un correo electrónico usando la API REST v3 de Brevo.
+ * Mucho más confiable para entornos serverless como Vercel.
  */
 export async function sendEmail({ to, subject, html }: { to: string; subject: string; html: string }) {
-  console.log(`[EMAIL_ATTEMPT] Destinatario: ${to}, Asunto: ${subject}`);
+  const apiKey = process.env.BREVO_API_KEY || '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';
+  const senderEmail = process.env.SMTP_USER || 'camilojc1725@gmail.com';
+
+  console.log(`[BREVO_API_ATTEMPT] Destinatario: ${to}, Asunto: ${subject}`);
+
   try {
-    const info = await transporter.sendMail({
-      from: `"Los Toreto" <${process.env.SMTP_USER}>`,
-      to,
-      subject,
-      html,
+    const response = await fetch('https://api.brevo.com/v3/smtp/email', {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'api-key': apiKey,
+      },
+      body: JSON.stringify({
+        sender: { name: 'Los Toreto', email: senderEmail },
+        to: [{ email: to }],
+        subject: subject,
+        htmlContent: html,
+      }),
     });
-    console.log('[EMAIL_SUCCESS] ID:', info.messageId);
-    return { success: true, messageId: info.messageId };
+
+    const data = await response.json();
+
+    if (response.ok) {
+      console.log('[BREVO_API_SUCCESS] ID:', data.messageId);
+      return { success: true, messageId: data.messageId };
+    } else {
+      console.error('[BREVO_API_ERROR] Detalles:', data);
+      return { success: false, error: data };
+    }
   } catch (error) {
-    console.error('[EMAIL_FATAL_ERROR] Fallo al enviar:', error);
+    console.error('[BREVO_API_FATAL] Error de red:', error);
     return { success: false, error };
   }
 }
