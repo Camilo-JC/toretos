@@ -179,7 +179,7 @@ export default async function DashboardPage() {
         id: d.id, 
         name: d.customer?.name || 'Venta', 
         amount: d.total, 
-        date: d.paidAt, 
+        date: d.paidAt || d.createdAt, 
         type: 'LIQUIDACION' 
       })),
       ...allAbonos.map(item => ({ 
@@ -189,7 +189,7 @@ export default async function DashboardPage() {
         date: item.createdAt, 
         type: 'ABONO' 
       }))
-    ].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+    ].sort((a, b) => new Date(b.date as Date).getTime() - new Date(a.date as Date).getTime())
 
     recentPurchases = combinedRecents.slice(0, 4)
   }
