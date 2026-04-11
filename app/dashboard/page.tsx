@@ -8,6 +8,12 @@ import Link from 'next/link'
 
 export const revalidate = 0
 
+interface AppSession {
+  userId: string;
+  role: string;
+  username: string;
+}
+
 // Utils to calculate percentage difference
 const calcGrowth = (current: number, past: number) => {
   if (past === 0) return current > 0 ? 100 : 0
@@ -15,9 +21,9 @@ const calcGrowth = (current: number, past: number) => {
 }
 
 export default async function DashboardPage() {
-  const session = await getSession()
-  const role = session?.role as string
-  const adminName = session?.username || 'Admin'
+  const session = (await getSession()) as unknown as AppSession
+  const role = session?.role || 'WORKER'
+  const adminName = (session?.username as string) || 'Admin'
 
   // Variables para calculos (Admin)
   let metrics = {
@@ -73,14 +79,14 @@ export default async function DashboardPage() {
       take: 5
     })
 
-    metrics.dineroEnCalle = pendingDebts.reduce((acc, d) => acc + (d.subtotal || 0), 0)
+    metrics.dineroEnCalle = pendingDebts.reduce((acc: number, d: any) => acc + (d.subtotal || 0), 0)
 
     let ayerIncome = 0
     let mesPasadoIncome = 0
     let historicoHaceMes = 0
 
     // PROCESAR LIQUIDACIONES (PAGOS TOTALES)
-    allPaid.forEach(d => {
+    allPaid.forEach((d: any) => {
       if (!d.paidAt) return
       const amount = d.total || 0
       metrics.totalHistorial += amount
@@ -104,7 +110,7 @@ export default async function DashboardPage() {
 
     // PROCESAR ABONOS (PAGOS PARCIALES)
     // El monto del abono es el valor absoluto del precio del item
-    allAbonos.forEach(item => {
+    allAbonos.forEach((item: any) => {
       const amount = Math.abs(item.price * item.quantity)
       metrics.totalHistorial += amount
 
@@ -131,10 +137,10 @@ export default async function DashboardPage() {
     metrics.historicoCrecimiento = calcGrowth(metrics.totalHistorial, historicoHaceMes)
 
     // Crecimiento de mora (comparado con el inicio del mes)
-    const deudasViejas = pendingDebts.reduce((acc, d) => {
+    const deudasViejas = pendingDebts.reduce((acc: number, d: any) => {
       const subtotalViejo = d.items
-        .filter(item => item.createdAt < startOfThisMonth)
-        .reduce((sum, item) => sum + (item.price * item.quantity), 0)
+        .filter((item: any) => item.createdAt < startOfThisMonth)
+        .reduce((sum: number, item: any) => sum + (item.price * item.quantity), 0)
       return acc + subtotalViejo
     }, 0)
     metrics.moraCrecimiento = calcGrowth(metrics.dineroEnCalle, deudasViejas)
@@ -147,7 +153,7 @@ export default async function DashboardPage() {
       { date: startOfThisMonth, value: 0 },
     ]
 
-    allPaid.forEach(d => {
+    allPaid.forEach((d: any) => {
       if (!d.paidAt) return
       for (const m of monthsAgg) {
         if (d.paidAt.getFullYear() === m.date.getFullYear() && d.paidAt.getMonth() === m.date.getMonth()) {
@@ -156,7 +162,7 @@ export default async function DashboardPage() {
       }
     })
 
-    allAbonos.forEach(item => {
+    allAbonos.forEach((item: any) => {
       for (const m of monthsAgg) {
         if (item.createdAt.getFullYear() === m.date.getFullYear() && item.createdAt.getMonth() === m.date.getMonth()) {
           m.value += Math.abs(item.price * item.quantity)
@@ -164,32 +170,32 @@ export default async function DashboardPage() {
       }
     })
 
-    const absoluteMax = Math.max(...monthsAgg.map(m => m.value), 1000)
+    const absoluteMax = Math.max(...monthsAgg.map((m: any) => m.value), 1000)
     const niceMax = Math.ceil(absoluteMax / 50000) * 50000
     
-    chartData = monthsAgg.map(m => ({
+    chartData = monthsAgg.map((m: any) => ({
       month: format(m.date, 'MMM yyyy', { locale: es }).toUpperCase(),
       value: m.value,
       maxValue: niceMax
     }))
 
     // 6. Cobros Recientes (Combinando Liquidaciones y Abonos)
-    const combinedRecents = [
-      ...allPaid.map(d => ({ 
+    const combinedRecents: any[] = [
+      ...allPaid.map((d: any) => ({ 
         id: d.id, 
         name: d.customer?.name || 'Venta', 
         amount: d.total, 
         date: d.paidAt || d.createdAt, 
         type: 'LIQUIDACION' 
       })),
-      ...allAbonos.map(item => ({ 
+      ...allAbonos.map((item: any) => ({ 
         id: item.id, 
         name: item.debt?.customer?.name || 'Abono', 
         amount: Math.abs(item.price * item.quantity), 
         date: item.createdAt, 
         type: 'ABONO' 
       }))
-    ].sort((a, b) => new Date(b.date as Date).getTime() - new Date(a.date as Date).getTime())
+    ].sort((a: any, b: any) => new Date(b.date).getTime() - new Date(a.date).getTime())
 
     recentPurchases = combinedRecents.slice(0, 4)
   }
