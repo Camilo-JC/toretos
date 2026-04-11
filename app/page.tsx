@@ -8,6 +8,13 @@ export default function LoginPage() {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
+  const [showForgotModal, setShowForgotModal] = useState(false)
+  const [recoveryStep, setRecoveryStep] = useState(1) // 1: input username, 2: input code & new pass
+  const [recoveryUsername, setRecoveryUsername] = useState('')
+  const [recoveryCode, setRecoveryCode] = useState('')
+  const [recoveryNewPassword, setRecoveryNewPassword] = useState('')
+  const [recoveryLoading, setRecoveryLoading] = useState(false)
+  const [recoveryMessage, setRecoveryMessage] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
   const router = useRouter()
@@ -39,6 +46,58 @@ export default function LoginPage() {
       setError('Problema de conexión')
       setLoading(false)
     }
+  }
+
+  const handleSendCode = async () => {
+    if (!recoveryUsername) return setRecoveryMessage('Ingresa tu usuario')
+    setRecoveryLoading(true)
+    setRecoveryMessage('')
+    try {
+      const res = await fetch('/api/auth/forgot-password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username: recoveryUsername })
+      })
+      if (res.ok) {
+        setRecoveryStep(2)
+        setRecoveryMessage('Si el usuario existe, se envió un código al administrador.')
+      } else {
+        setRecoveryMessage('Error enviando el código.')
+      }
+    } catch (e) {
+      setRecoveryMessage('Error de conexión.')
+    }
+    setRecoveryLoading(false)
+  }
+
+  const handleResetPassword = async () => {
+    if (!recoveryCode || !recoveryNewPassword) return setRecoveryMessage('Completa todos los campos')
+    setRecoveryLoading(true)
+    setRecoveryMessage('')
+    try {
+      const res = await fetch('/api/auth/reset-password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          username: recoveryUsername, 
+          code: recoveryCode, 
+          newPassword: recoveryNewPassword 
+        })
+      })
+      const data = await res.json()
+      if (res.ok) {
+        setRecoveryMessage('Contraseña actualizada. Ya puedes entrar.')
+        setTimeout(() => {
+          setShowForgotModal(false)
+          setRecoveryStep(1)
+        }, 3000)
+      } else {
+        setRecoveryMessage(data.error || 'Error al restablecer.')
+      }
+    } catch (e) {
+      setRecoveryMessage('Error de conexión.')
+    }
+    setRecoveryLoading(false)
   }
 
   return (
@@ -96,7 +155,10 @@ export default function LoginPage() {
               </div>
               
               <div className="input-group">
-                <label htmlFor="password" style={{ color: '#9ca3af', fontSize: '0.75rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Contraseña</label>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
+                  <label htmlFor="password" style={{ color: '#9ca3af', fontSize: '0.75rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Contraseña</label>
+                  <button type="button" onClick={() => setShowForgotModal(true)} style={{ background: 'none', border: 'none', color: '#6366f1', fontSize: '0.75rem', cursor: 'pointer', fontWeight: '600' }}>¿Olvidaste tu contraseña?</button>
+                </div>
                 <div style={{ position: 'relative' }}>
                   <FiLock style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: '#6b7280' }} />
                   <input 
@@ -127,9 +189,97 @@ export default function LoginPage() {
           </div>
         </div>
         <p style={{ marginTop: '2rem', color: '#4b5563', fontSize: '0.75rem', textAlign: 'center' }}>
-          Seguridad de Grado Militar Activada • Los Toreto v2.0
+          Seguridad de Grado Militar Activada • Los Toreto v3.0
         </p>
       </div>
+
+      {/* MODAL OLVIDÓ CONTRASEÑA */}
+      {showForgotModal && (
+        <div className="forgot-modal-overlay" onClick={() => { if(!recoveryLoading) setShowForgotModal(false) }}>
+          <div className="forgot-modal animate-slide-up" onClick={e => e.stopPropagation()}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+              <h2 style={{ color: 'white', fontSize: '1.25rem', fontWeight: '800', margin: 0 }}>Recuperar Acceso</h2>
+              <button 
+                onClick={() => setShowForgotModal(false)}
+                style={{ background: 'none', border: 'none', color: '#6b7280', cursor: 'pointer', fontSize: '1.25rem' }}
+              >✕</button>
+            </div>
+
+            {recoveryMessage && (
+              <div style={{ 
+                padding: '0.75rem', 
+                borderRadius: '8px', 
+                fontSize: '0.8rem', 
+                marginBottom: '1rem',
+                background: recoveryMessage.includes('Error') ? 'rgba(239, 68, 68, 0.1)' : 'rgba(16, 185, 129, 0.1)',
+                color: recoveryMessage.includes('Error') ? '#f87171' : '#34d399',
+                border: `1px solid ${recoveryMessage.includes('Error') ? 'rgba(239, 68, 68, 0.2)' : 'rgba(16, 185, 129, 0.2)'}`
+              }}>
+                {recoveryMessage}
+              </div>
+            )}
+
+            {recoveryStep === 1 ? (
+              <>
+                <p style={{ color: '#9ca3af', fontSize: '0.85rem', marginBottom: '1.5rem', lineHeight: '1.5' }}>
+                  Ingresa tu nombre de usuario. Enviaremos un código de seguridad al correo del administrador.
+                </p>
+                <div className="input-group" style={{ marginBottom: '1.5rem' }}>
+                  <input 
+                    className="input-control login-input" 
+                    placeholder="Tu usuario"
+                    value={recoveryUsername}
+                    onChange={e => setRecoveryUsername(e.target.value)}
+                  />
+                </div>
+                <button 
+                  className="btn btn-primary" 
+                  onClick={handleSendCode}
+                  disabled={recoveryLoading}
+                  style={{ width: '100%', height: '45px', borderRadius: '10px' }}
+                >
+                  {recoveryLoading ? 'Enviando...' : 'Enviar Código al Admin'}
+                </button>
+              </>
+            ) : (
+              <>
+                <p style={{ color: '#9ca3af', fontSize: '0.85rem', marginBottom: '1.5rem', lineHeight: '1.5' }}>
+                  Ingresa el código que Camilo recibió en su correo y tu nueva contraseña.
+                </p>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginBottom: '1.5rem' }}>
+                  <input 
+                    className="input-control login-input" 
+                    placeholder="Código de 6 dígitos"
+                    value={recoveryCode}
+                    onChange={e => setRecoveryCode(e.target.value)}
+                  />
+                  <input 
+                    className="input-control login-input" 
+                    type="password"
+                    placeholder="Nueva contraseña"
+                    value={recoveryNewPassword}
+                    onChange={e => setRecoveryNewPassword(e.target.value)}
+                  />
+                </div>
+                <button 
+                  className="btn btn-primary" 
+                  onClick={handleResetPassword}
+                  disabled={recoveryLoading}
+                  style={{ width: '100%', height: '45px', borderRadius: '10px' }}
+                >
+                  {recoveryLoading ? 'Procesando...' : 'Restablecer Contraseña'}
+                </button>
+                <button 
+                  onClick={() => setRecoveryStep(1)}
+                  style={{ width: '100%', background: 'none', border: 'none', color: '#6b7280', fontSize: '0.75rem', marginTop: '1rem', cursor: 'pointer' }}
+                >
+                  Regresar
+                </button>
+              </>
+            )}
+          </div>
+        </div>
+      )}
 
       <style jsx>{`
         .login-page {
@@ -278,6 +428,28 @@ export default function LoginPage() {
           20%, 80% { transform: translate3d(2px, 0, 0); }
           30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
           40%, 60% { transform: translate3d(4px, 0, 0); }
+        }
+
+        .forgot-modal-overlay {
+          position: fixed;
+          inset: 0;
+          background: rgba(0, 0, 0, 0.7);
+          backdrop-filter: blur(5px);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          z-index: 1000;
+          padding: 1.5rem;
+        }
+
+        .forgot-modal {
+          background: #111827;
+          border: 1px solid rgba(255, 255, 255, 0.1);
+          border-radius: 1.5rem;
+          padding: 2rem;
+          width: 100%;
+          max-width: 360px;
+          box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
         }
       `}</style>
     </div>

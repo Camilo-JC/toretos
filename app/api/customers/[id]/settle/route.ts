@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server'
 import prisma from '@/lib/prisma'
 import { getSession } from '@/lib/session'
+import { sendReceipt } from '@/lib/email'
+import { Prisma } from '@prisma/client'
 
 export async function POST(request: Request, { params }: { params: Promise<{ id: string }> }) {
   const session = await getSession()
@@ -30,12 +32,16 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
     })
 
     const info = settleInfo || {}
+    const customerEmail = info.email || result.customer.email
 
-    // MOCK: Enviar correo electrónico
-    console.log(`[EMAIL MOCK] Enviando factura PDF a cliente (ID: ${result.customer.id})...`)
-    console.log(`[EMAIL MOCK] Correo: ${info.email || result.customer.email || 'No proporcionado'}`)
-    console.log(`[EMAIL MOCK] Método de Pago: ${info.method || 'Efectivo'}`)
-    console.log(`[EMAIL MOCK] Factura pagada: ${result.total}`)
+    if (customerEmail) {
+      await sendReceipt(
+        customerEmail,
+        result.customer.name,
+        result.total,
+        { id: result.id, method: info.method || 'Efectivo' }
+      )
+    }
 
     return NextResponse.json({ success: true, debt: result })
   } catch (error: any) {
