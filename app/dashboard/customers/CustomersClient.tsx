@@ -77,7 +77,14 @@ export default function CustomersClient({ initialCustomers, role, inventory }: {
     } else if (fiadoMode === 'generic') {
       payload = { isGeneric: true, isAbono: false, description: genericForm.description, amount: Number(genericForm.amount) }
     } else {
-      payload = { isGeneric: false, isAbono: true, amount: Number(abonoForm.amount) }
+      const amount = Number(abonoForm.amount)
+      const currentDebt = selectedCustomer.debts[0]?.subtotal || 0
+      if (amount > currentDebt) {
+        alert(`No puedes abonar ${formatCOP(amount)} porque la deuda actual es de ${formatCOP(currentDebt)}.`)
+        setLoading(false)
+        return
+      }
+      payload = { isGeneric: false, isAbono: true, amount }
     }
 
     const res = await fetch(`/api/customers/${selectedCustomer.id}/debt`, {
@@ -254,14 +261,24 @@ export default function CustomersClient({ initialCustomers, role, inventory }: {
                       <span>Subtotal:</span>
                       <span style={{ fontWeight: 'bold' }}>{formatCOP(selectedCustomer.debts[0].subtotal)}</span>
                     </div>
-                    <div style={{ padding: '0.5rem 0', display: 'flex', justifyContent: 'space-between', color: 'var(--danger)' }}>
-                      <span>Recargo por Fiado (+5%):</span>
-                      <span>{formatCOP(selectedCustomer.debts[0].subtotal * 0.05)}</span>
-                    </div>
-                    <div style={{ paddingTop: '0.5rem', display: 'flex', justifyContent: 'space-between', fontSize: '1.25rem', fontWeight: 'bold', color: 'var(--primary)' }}>
-                      <span>TOTAL A PAGAR:</span>
-                      <span>{formatCOP(selectedCustomer.debts[0].subtotal * 1.05)}</span>
-                    </div>
+                    {selectedCustomer.debts[0].subtotal > 0 && (
+                      <>
+                        <div style={{ padding: '0.5rem 0', display: 'flex', justifyContent: 'space-between', color: 'var(--danger)' }}>
+                          <span>Recargo por Fiado (+5%):</span>
+                          <span>{formatCOP(selectedCustomer.debts[0].subtotal * 0.05)}</span>
+                        </div>
+                        <div style={{ paddingTop: '0.5rem', display: 'flex', justifyContent: 'space-between', fontSize: '1.25rem', fontWeight: 'bold', color: 'var(--primary)' }}>
+                          <span>TOTAL A PAGAR:</span>
+                          <span>{formatCOP(selectedCustomer.debts[0].subtotal * 1.05)}</span>
+                        </div>
+                      </>
+                    )}
+                    {selectedCustomer.debts[0].subtotal <= 0 && (
+                       <div style={{ paddingTop: '0.5rem', display: 'flex', justifyContent: 'space-between', fontSize: '1.25rem', fontWeight: 'bold', color: 'var(--success)' }}>
+                        <span>TOTAL A PAGAR:</span>
+                        <span>$0,00</span>
+                      </div>
+                    )}
                   </div>
 
                   {role === 'ADMIN' ? (

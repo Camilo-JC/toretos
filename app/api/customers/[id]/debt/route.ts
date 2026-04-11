@@ -55,10 +55,19 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
         where: { customerId, status: 'PENDING' }
       })
 
+      if (!debt && isAbono) {
+        throw new Error('No puedes abonar a una cuenta sin deudas pendientes')
+      }
+
       if (!debt) {
         debt = await tx.debt.create({
           data: { customerId, subtotal: 0 }
         })
+      }
+
+      // Validar que el abono no supere la deuda actual
+      if (isAbono && amount > debt.subtotal) {
+        throw new Error(`El abono ($${amount}) no puede ser mayor a la deuda actual ($${debt.subtotal})`)
       }
 
       // Crear item de deuda y aumentar subtotal
