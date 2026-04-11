@@ -144,7 +144,7 @@ export default function Navigation({ role, username }: { role: string, username:
         .dashboard-header {
           position: sticky;
           top: 0;
-          height: 70px;
+          height: 60px;
           background: var(--bg-header);
           backdrop-filter: blur(15px);
           -webkit-backdrop-filter: blur(15px);
@@ -153,6 +153,9 @@ export default function Navigation({ role, username }: { role: string, username:
         }
         
         @media (min-width: 768px) {
+          .dashboard-header {
+            height: 70px;
+          }
           .mobile-nav {
             display: none;
           }
@@ -164,6 +167,13 @@ export default function Navigation({ role, username }: { role: string, username:
         @media (max-width: 640px) {
           .hide-mobile {
             display: none;
+          }
+          .mobile-nav {
+            padding: 0.5rem 0 calc(0.5rem + env(safe-area-inset-bottom));
+          }
+          .mobile-nav-item {
+            padding: 0.25rem;
+            font-size: 0.7rem;
           }
         }
       `}</style>

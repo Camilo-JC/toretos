@@ -87,6 +87,13 @@ button {
   padding: 0 1rem;
 }
 
+@media (max-width: 640px) {
+  .container {
+    padding: 0 0.75rem;
+    padding-bottom: 80px; /* Space for mobile nav */
+  }
+}
+
 .btn {
   display: inline-flex;
   align-items: center;
@@ -150,6 +157,15 @@ button {
 
 .card-body {
   padding: 1.5rem;
+}
+
+@media (max-width: 640px) {
+  .card-body {
+    padding: 1rem;
+  }
+  .card-header {
+    padding: 1rem;
+  }
 }
 
 .input-group {

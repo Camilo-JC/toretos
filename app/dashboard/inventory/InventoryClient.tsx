@@ -79,34 +79,41 @@ export default function InventoryClient({ initialProducts, role }: { initialProd
         )}
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1rem' }}>
+      <div style={{ 
+        display: 'grid', 
+        gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))', 
+        gap: '0.75rem' 
+      }}>
         {products.length === 0 ? (
-          <p style={{ color: 'var(--text-secondary)' }}>No hay productos registrados.</p>
+          <p style={{ color: 'var(--text-secondary)', textAlign: 'center', gridColumn: '1 / -1', padding: '2rem' }}>No hay productos registrados.</p>
         ) : (
           products.map(p => (
-            <div key={p.id} className="card">
-              <div className="card-body">
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.5rem' }}>
-                  <h3 style={{ fontSize: '1.125rem', fontWeight: 'bold' }}>{p.name}</h3>
-                  <span className={`badge ${p.stock > 10 ? 'badge-success' : p.stock > 0 ? 'badge-warning' : 'badge-danger'}`}>
-                    Stock: {p.stock}
-                  </span>
+            <div key={p.id} className="card animate-fade-in" style={{ display: 'flex', flexDirection: 'column' }}>
+              <div className="card-body" style={{ padding: '0.75rem', display: 'flex', flexDirection: 'column', height: '100%', gap: '0.5rem' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                  <h3 style={{ fontSize: '1rem', fontWeight: 'bold', lineHeight: '1.2' }}>{p.name}</h3>
                 </div>
-                <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', marginBottom: '1rem', minHeight: '40px' }}>
-                  {p.description || 'Sin descripción'}
+                
+                <span className={`badge ${p.stock > 10 ? 'badge-success' : p.stock > 0 ? 'badge-warning' : 'badge-danger'}`} style={{ alignSelf: 'flex-start', fontSize: '0.7rem' }}>
+                  Stock: {p.stock}
+                </span>
+
+                <p style={{ color: 'var(--text-secondary)', fontSize: '0.75rem', flexGrow: 1, margin: '0.25rem 0' }}>
+                  {p.description || 'Sin desc.'}
                 </p>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{ fontSize: '1.25rem', fontWeight: 'bold', color: 'var(--primary)' }}>
-                    {formatCOP(p.price)}
+
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 'auto' }}>
+                  <span style={{ fontSize: '1rem', fontWeight: 'bold', color: 'var(--primary)' }}>
+                    {formatCOP(p.price).split(',')[0]}
                   </span>
                   
                   {role === 'ADMIN' && (
-                    <div style={{ display: 'flex', gap: '0.5rem' }}>
-                      <button className="btn-icon" onClick={() => openModal(p)} style={{ color: 'var(--text-secondary)', background: 'none', border: 'none', cursor: 'pointer' }}>
-                        <FiEdit2 size={18} />
+                    <div style={{ display: 'flex', gap: '0.25rem' }}>
+                      <button className="btn-icon" onClick={() => openModal(p)} style={{ color: 'var(--text-secondary)', background: 'var(--bg-main)', border: '1px solid var(--border)', borderRadius: '4px', padding: '4px' }}>
+                        <FiEdit2 size={16} />
                       </button>
-                      <button className="btn-icon" onClick={() => handleDelete(p.id)} style={{ color: 'var(--danger)', background: 'none', border: 'none', cursor: 'pointer' }}>
-                        <FiTrash2 size={18} />
+                      <button className="btn-icon" onClick={() => handleDelete(p.id)} style={{ color: 'var(--danger)', background: 'var(--bg-main)', border: '1px solid var(--border)', borderRadius: '4px', padding: '4px' }}>
+                        <FiTrash2 size={16} />
                       </button>
                     </div>
                   )}
