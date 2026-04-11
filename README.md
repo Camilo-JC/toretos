@@ -1,36 +1,59 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🐂 Los Toreto - Sistema de Gestión Premium
 
-## Getting Started
+Sistema de gestión táctica diseñado para tiendas de barrio de alto volumen, optimizado para el control de fiados, inventario y reportes financieros profesionales.
 
-First, run the development server:
+![Los Toreto PWA](public/icon.png)
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## ✨ Características Principales
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- **Dashboard Táctico**: Visualización de ingresos diarios, ventas mensuales y "dinero en la calle" con gráficas dinámicas (escala M/k).
+- **Gestión de Fiados (Abonos)**: Sistema robusto para registrar pagos parciales y saldar cuentas de clientes.
+- **Inventario Inteligente**: Alertas automáticas de stock bajo y control total de productos.
+- **Reportes PDF Profesionales**: Generación de informes financieros y facturas con branding oficial de Los Toreto.
+- **Seguridad Avanzada**: Protección contra ataques de fuerza bruta (lockout) y autenticación segura con JWT.
+- **App Instalable (PWA)**: Se puede instalar en Android y iPhone directamente desde el navegador.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 🚀 Instalación Local
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+1.  **Clonar el repositorio**:
+    ```bash
+    git clone https://github.com/tu-usuario/toretos.git
+    cd toretos
+    ```
 
-## Learn More
+2.  **Instalar dependencias**:
+    ```bash
+    npm install
+    ```
 
-To learn more about Next.js, take a look at the following resources:
+3.  **Configurar base de datos**:
+    - Cambia el `provider` en `prisma/schema.prisma` a `sqlite` si deseas probar localmente, o mantén `postgresql` para producción.
+    - Crea un archivo `.env` basado en `.env.example`.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+4.  **Migrar base de datos**:
+    ```bash
+    npx prisma migrate dev
+    ```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+5.  **Iniciar servidor**:
+    ```bash
+    npm run dev
+    ```
 
-## Deploy on Vercel
+## ☁️ Despliegue en la Nube (Vercel + Neon)
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Este proyecto está listo para ser desplegado:
+1.  **Base de Datos**: Crea un proyecto gratis en [Neon.tech](https://neon.tech) (PostgreSQL).
+2.  **Hosting**: Conecta tu repositorio de GitHub a [Vercel](https://vercel.com).
+3.  **Variables de Entorno**: Configura `DATABASE_URL` y `JWT_SECRET` en el panel de Vercel.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 🛠️ Tecnologías
+
+- **Framework**: Next.js 16 (App Router)
+- **Base de Datos**: Prisma ORM + PostgreSQL/SQLite
+- **Estilo**: CSS Vanilla (Diseño Glassmorphism Premium)
+- **Documentos**: jsPDF / autoTable
+
+---
+
+**Desarrollado con ❤️ para Los Toreto.**

@@ -1,0 +1,72 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  name      String
+  username  String   @unique
+  password  String
+  role      String   @default("WORKER") // ADMIN, WORKER
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Customer {
+  id        String   @id @default(cuid())
+  name      String
+  document  String?  @unique
+  phone     String?
+  email     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  debts     Debt[]
+}
+
+model Product {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  price       Float
+  stock       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  debtItems   DebtItem[]
+}
+
+model Debt {
+  id         String     @id @default(cuid())
+  customer   Customer   @relation(fields: [customerId], references: [id])
+  customerId String
+  items      DebtItem[]
+  status     String     @default("PENDING") // PENDING, PAID
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+  paidAt     DateTime?
+  subtotal   Float      @default(0) // computed sum of items
+  total      Float      @default(0) // subtotal * 1.05 when paid
+}
+
+model DebtItem {
+  id          String   @id @default(cuid())
+  debt        Debt     @relation(fields: [debtId], references: [id], onDelete: Cascade)
+  debtId      String
+  product     Product? @relation(fields: [productId], references: [id])
+  productId   String?
+  description String?
+  quantity    Int      @default(1)
+  price       Float    // price at the moment of adding to debt
+  createdAt   DateTime @default(now())
+}
+
+model Settings {
+  id        String   @id @default(cuid())
+  storeName String   @default("Los Toreto")
+  logoUrl   String?
+  updatedAt DateTime @updatedAt
+}
