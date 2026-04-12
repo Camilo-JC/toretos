@@ -315,8 +315,6 @@ export default async function DashboardPage() {
           </Link>
         </div>
       </div>
-
-      </div>
     </div>
   )
 }
