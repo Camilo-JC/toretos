@@ -31,7 +31,7 @@ export default function Navigation({ role, username }: { role: string, username:
           const Icon = item.icon
           const isActive = pathname === item.path || (item.path !== '/dashboard' && pathname.startsWith(item.path))
           return (
-            <button 
+            <button
               key={item.path}
               className={`mobile-nav-item ${isActive ? 'active' : ''}`}
               onClick={() => router.push(item.path)}
@@ -51,7 +51,7 @@ export default function Navigation({ role, username }: { role: string, username:
           <div style={{ display: 'flex', alignItems: 'center', gap: '2.5rem' }}>
             <div style={{ fontWeight: '900', fontSize: '1.4rem', color: 'var(--primary)', display: 'flex', alignItems: 'center', gap: '0.75rem', cursor: 'pointer', letterSpacing: '-0.02em' }} onClick={() => router.push('/dashboard')}>
               <div style={{ background: 'var(--primary)', padding: '5px', borderRadius: '8px', display: 'flex', boxShadow: '0 4px 12px rgba(99, 102, 241, 0.3)' }}>
-                <img src="/icon-512.png" alt="Logo" style={{ width: '24px', height: '24px', objectFit: 'contain' }} />
+                <img src="/icon-512.png" alt="Logo" style={{ width: '34px', height: '34px', objectFit: 'contain' }} />
               </div>
               <span className="hide-tablet">Los Toreto</span>
               {role === 'ADMIN' && <span className="badge badge-success" style={{ fontSize: '10px', padding: '2px 6px' }}>ADMIN</span>}
@@ -63,7 +63,7 @@ export default function Navigation({ role, username }: { role: string, username:
                 const Icon = item.icon
                 const isActive = pathname === item.path || (item.path !== '/dashboard' && pathname.startsWith(item.path))
                 return (
-                  <button 
+                  <button
                     key={item.path}
                     className={`desktop-nav-item ${isActive ? 'active' : ''}`}
                     onClick={() => router.push(item.path)}
@@ -75,7 +75,7 @@ export default function Navigation({ role, username }: { role: string, username:
               })}
             </nav>
           </div>
-          
+
           <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem' }}>
             <div className="user-profile hide-mobile">
               <span style={{ fontSize: '0.875rem', color: 'var(--text-primary)', fontWeight: '600' }}>{username}</span>
@@ -86,7 +86,7 @@ export default function Navigation({ role, username }: { role: string, username:
           </div>
         </div>
       </header>
-      
+
       <style jsx>{`
         .mobile-nav {
           position: fixed;
