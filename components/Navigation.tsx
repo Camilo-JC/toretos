@@ -50,39 +50,41 @@ export default function Navigation({ role, username }: { role: string, username:
         <div className="container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', height: '100%' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '2.5rem' }}>
             <div style={{ fontWeight: '900', fontSize: '1.4rem', color: 'var(--primary)', display: 'flex', alignItems: 'center', gap: '0.75rem', cursor: 'pointer', letterSpacing: '-0.02em' }} onClick={() => router.push('/dashboard')}>
+
               <img src="/logo-toreto.ico" alt="Logo" style={{ width: '40px', height: '40px', objectFit: 'contain' }} />
-              <span className="hide-tablet">Los Toreto</span>
-              {role === 'ADMIN' && <span className="badge badge-success" style={{ fontSize: '10px', padding: '2px 6px' }}>ADMIN</span>}
             </div>
-
-            {/* Desktop/Tablet Dock Navigation */}
-            <nav className="desktop-nav">
-              {navItems.map(item => {
-                const Icon = item.icon
-                const isActive = pathname === item.path || (item.path !== '/dashboard' && pathname.startsWith(item.path))
-                return (
-                  <button
-                    key={item.path}
-                    className={`desktop-nav-item ${isActive ? 'active' : ''}`}
-                    onClick={() => router.push(item.path)}
-                  >
-                    <Icon size={18} />
-                    <span>{item.label}</span>
-                  </button>
-                )
-              })}
-            </nav>
+            <span className="hide-tablet">Los Toreto</span>
+            {role === 'ADMIN' && <span className="badge badge-success" style={{ fontSize: '10px', padding: '2px 6px' }}>ADMIN</span>}
           </div>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem' }}>
-            <div className="user-profile hide-mobile">
-              <span style={{ fontSize: '0.875rem', color: 'var(--text-primary)', fontWeight: '600' }}>{username}</span>
-            </div>
-            <button className="logout-btn" onClick={handleLogout} title="Cerrar sesión">
-              <FiLogOut size={18} />
-            </button>
-          </div>
+          {/* Desktop/Tablet Dock Navigation */}
+          <nav className="desktop-nav">
+            {navItems.map(item => {
+              const Icon = item.icon
+              const isActive = pathname === item.path || (item.path !== '/dashboard' && pathname.startsWith(item.path))
+              return (
+                <button
+                  key={item.path}
+                  className={`desktop-nav-item ${isActive ? 'active' : ''}`}
+                  onClick={() => router.push(item.path)}
+                >
+                  <Icon size={18} />
+                  <span>{item.label}</span>
+                </button>
+              )
+            })}
+          </nav>
         </div>
+
+        <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem' }}>
+          <div className="user-profile hide-mobile">
+            <span style={{ fontSize: '0.875rem', color: 'var(--text-primary)', fontWeight: '600' }}>{username}</span>
+          </div>
+          <button className="logout-btn" onClick={handleLogout} title="Cerrar sesión">
+            <FiLogOut size={18} />
+          </button>
+        </div>
+
       </header>
 
       <style jsx>{`
