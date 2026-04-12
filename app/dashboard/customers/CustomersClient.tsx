@@ -339,10 +339,10 @@ export default function CustomersClient({ initialCustomers, role, inventory }: {
               Aún no hay cliente seleccionado.
             </div>
           )}
-        </div>
       </div>
+    </div>
 
-      {isNewCustomerOpen && (
+    {isNewCustomerOpen && (
         <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.6)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 2000, padding: '1rem' }}>
           <div className="card" style={{ width: '100%', maxWidth: '400px', maxHeight: '90vh', overflowY: 'auto' }}>
             <div className="card-header">
