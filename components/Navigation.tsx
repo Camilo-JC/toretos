@@ -51,7 +51,7 @@ export default function Navigation({ role, username }: { role: string, username:
           <div style={{ display: 'flex', alignItems: 'center', gap: '2.5rem' }}>
             <div style={{ fontWeight: '900', fontSize: '1.4rem', color: 'var(--primary)', display: 'flex', alignItems: 'center', gap: '0.75rem', cursor: 'pointer', letterSpacing: '-0.02em' }} onClick={() => router.push('/dashboard')}>
               <div style={{ background: 'var(--primary)', padding: '5px', borderRadius: '8px', display: 'flex', boxShadow: '0 4px 12px rgba(99, 102, 241, 0.3)' }}>
-                <img src="/icon-v2.png" alt="Logo" style={{ width: '24px', height: '24px', objectFit: 'contain' }} />
+                <img src="/logo-toreto.ico" alt="Logo" style={{ width: '24px', height: '24px', objectFit: 'contain' }} />
               </div>
               <span className="hide-tablet">Los Toreto</span>
               {role === 'ADMIN' && <span className="badge badge-success" style={{ fontSize: '10px', padding: '2px 6px' }}>ADMIN</span>}
