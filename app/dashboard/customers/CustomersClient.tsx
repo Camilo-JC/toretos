@@ -339,6 +339,7 @@ export default function CustomersClient({ initialCustomers, role, inventory }: {
               Aún no hay cliente seleccionado.
             </div>
           )}
+        </div>
       </div>
     </div>
 
