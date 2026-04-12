@@ -240,7 +240,7 @@ export default function CustomersClient({ initialCustomers, role, inventory }: {
               onClick={() => setShowDetail(false)}
               style={{ background: 'var(--bg-main)', borderRadius: '50%', display: 'flex', border: '1px solid var(--border)' }}
             >
-              <FiArrowLeft size={20} style={{ color: 'white !important' }} />
+              <FiArrowLeft size={20} className="back-arrow-icon" />
             </button>
             <h2 style={{ fontSize: '1.25rem', fontWeight: 'bold' }}>
               {selectedCustomer ? `Cuenta de ${selectedCustomer.name}` : 'Seleccione o cree un cliente'}
@@ -521,6 +521,9 @@ export default function CustomersClient({ initialCustomers, role, inventory }: {
             position: relative;
             top: 0;
           }
+        }
+        :global(.back-arrow-icon) {
+          color: white !important;
         }
       `}</style>
     </div>
