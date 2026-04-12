@@ -50,7 +50,7 @@ export default function Navigation({ role, username }: { role: string, username:
         <div className="container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', height: '100%' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '2.5rem' }}>
             <div style={{ fontWeight: '900', fontSize: '1.4rem', color: 'var(--primary)', display: 'flex', alignItems: 'center', gap: '0.75rem', cursor: 'pointer', letterSpacing: '-0.02em' }} onClick={() => router.push('/dashboard')}>
-              <img src="/logo-toreto.ico" alt="Logo" style={{ width: '60px', height: '60px', objectFit: 'contain' }} />
+              <img src="/logo-toreto.ico" alt="Logo" style={{ width: '40px', height: '40px', objectFit: 'contain' }} />
               <span className="hide-tablet">Los Toreto</span>
               {role === 'ADMIN' && <span className="badge badge-success" style={{ fontSize: '10px', padding: '2px 6px' }}>ADMIN</span>}
             </div>
