@@ -69,12 +69,15 @@ export default function InventoryClient({ initialProducts, role }: { initialProd
   }
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <h2 style={{ fontSize: '1.5rem', fontWeight: 'bold' }}>Inventario</h2>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+      <div className="page-header animate-fade-in">
+        <div className="page-header-info">
+          <h1>Inventario</h1>
+          <p>Gestiona los productos, el stock y los precios de venta de tu tienda.</p>
+        </div>
         {role === 'ADMIN' && (
-          <button className="btn btn-primary" onClick={() => openModal()}>
-            <FiPlus size={18} /> Nuevo Producto
+          <button className="btn btn-primary" onClick={() => openModal()} style={{ padding: '0.8rem 1.5rem', fontSize: '1rem' }}>
+            <FiPlus size={20} /> Nuevo Producto
           </button>
         )}
       </div>

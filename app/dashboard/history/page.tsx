@@ -21,9 +21,11 @@ export default async function HistoryPage() {
 
   return (
     <div className="animate-fade-in">
-      <div style={{ marginBottom: '2rem' }}>
-        <h1 style={{ fontSize: '2rem', fontWeight: 'bold', color: 'white', marginBottom: '0.5rem' }}>Historial de Ventas</h1>
-        <p style={{ color: '#9ca3af' }}>Revisa todas las facturas que ya han sido saldadas en tu tienda.</p>
+      <div className="page-header">
+        <div className="page-header-info">
+          <h1>Historial de Ventas</h1>
+          <p>Revisa todas las facturas que ya han sido saldadas en tu tienda.</p>
+        </div>
       </div>
 
       <HistoryClient paidDebts={JSON.parse(JSON.stringify(paidDebts))} />

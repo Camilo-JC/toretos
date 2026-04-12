@@ -246,13 +246,11 @@ export default async function DashboardPage() {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem', fontFamily: 'var(--font-inter), sans-serif' }}>
       
-      {/* HEADER PREMIUM */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', backgroundColor: 'transparent', paddingTop: '1rem' }}>
-        <div>
-          <h1 style={{ fontSize: '2rem', fontWeight: 'bold', color: 'white', marginBottom: '0.25rem' }}>
-            Bienvenido, {adminName.charAt(0).toUpperCase() + adminName.slice(1)}
-          </h1>
-          <p style={{ color: '#9ca3af' }}>Consulta la información más reciente de tu tienda</p>
+      {/* HEADER PREMIUM UNIFICADO */}
+      <div className="page-header animate-fade-in">
+        <div className="page-header-info">
+          <h1>Bienvenido, {adminName.charAt(0).toUpperCase() + adminName.slice(1)}</h1>
+          <p>Consulta el estado financiero y el rendimiento de tu tienda en tiempo real.</p>
         </div>
         <DashboardActions metrics={metrics} />
       </div>

@@ -172,15 +172,27 @@ export default function CustomersClient({ initialCustomers, role, inventory }: {
   }
 
   return (
-    <div className={`customers-layout ${showDetail ? 'show-detail' : ''}`}>
-      {/* List Sidebar */}
-      <div className="customers-sidebar animate-fade-in" style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <h2 style={{ fontSize: '1.5rem', fontWeight: 'bold' }}>Clientes</h2>
-          <button className="btn btn-secondary" onClick={() => setIsNewCustomerOpen(true)} style={{ padding: '0.6rem' }}>
-            <FiUserPlus size={20} />
-          </button>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+      <div className="page-header animate-fade-in">
+        <div className="page-header-info">
+          <h1>Fiados y Clientes</h1>
+          <p>Lleva el control de las cuentas pendientes y los abonos de tus clientes de confianza.</p>
         </div>
+      </div>
+
+      <div className="customers-layout animate-fade-in" style={{ 
+        display: 'grid', 
+        gap: '1.5rem',
+        position: 'relative'
+      }}>
+        {/* List Sidebar - Master */}
+        <div className="customers-sidebar animate-fade-in" style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <h2 style={{ fontSize: '1.1rem', fontWeight: 'bold', textTransform: 'uppercase', color: 'var(--text-secondary)', letterSpacing: '0.05em' }}>Directorio</h2>
+            <button className="btn btn-secondary" onClick={() => setIsNewCustomerOpen(true)} style={{ padding: '0.5rem 1rem' }}>
+              <FiUserPlus size={18} /> <span className="hide-mobile">Nuevo</span>
+            </button>
+          </div>
         
         <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
           {customers.map(c => {

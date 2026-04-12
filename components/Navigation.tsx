@@ -25,8 +25,8 @@ export default function Navigation({ role, username }: { role: string, username:
 
   return (
     <>
-      {/* Mobile Bottom Navigation */}
-      <nav className="mobile-nav">
+      {/* Mobile Bottom Navigation (iPhone/Android) */}
+      <nav className="mobile-nav glass">
         {navItems.map(item => {
           const Icon = item.icon
           const isActive = pathname === item.path || (item.path !== '/dashboard' && pathname.startsWith(item.path))
@@ -36,26 +36,31 @@ export default function Navigation({ role, username }: { role: string, username:
               className={`mobile-nav-item ${isActive ? 'active' : ''}`}
               onClick={() => router.push(item.path)}
             >
-              <Icon size={20} />
+              <div className="icon-wrapper">
+                <Icon size={22} />
+              </div>
               <span>{item.label}</span>
             </button>
           )
         })}
       </nav>
 
-      {/* Header */}
-      <header className="dashboard-header">
+      {/* Header (Desktop/Tablet) */}
+      <header className="dashboard-header glass">
         <div className="container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', height: '100%' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '2rem' }}>
-            <div style={{ fontWeight: 'bold', fontSize: '1.25rem', color: 'var(--primary)', display: 'flex', alignItems: 'center', gap: '0.75rem', cursor: 'pointer' }} onClick={() => router.push('/dashboard')}>
-              <img src="/icon.png" alt="Logo" style={{ width: '30px', height: '30px', borderRadius: '4px' }} />
-              <span>Los Toreto</span>
-              {role === 'ADMIN' && <span className="badge badge-success" style={{ fontSize: '10px' }}>ADMIN</span>}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '2.5rem' }}>
+            <div style={{ fontWeight: '900', fontSize: '1.4rem', color: 'var(--primary)', display: 'flex', alignItems: 'center', gap: '0.75rem', cursor: 'pointer', letterSpacing: '-0.02em' }} onClick={() => router.push('/dashboard')}>
+              <div style={{ background: 'var(--primary)', padding: '5px', borderRadius: '8px', display: 'flex', boxShadow: '0 4px 12px rgba(99, 102, 241, 0.3)' }}>
+                <img src="/icon.png" alt="Logo" style={{ width: '24px', height: '24px', filter: 'brightness(0) invert(1)' }} />
+              </div>
+              <span className="hide-tablet">Los Toreto</span>
+              {role === 'ADMIN' && <span className="badge badge-success" style={{ fontSize: '10px', padding: '2px 6px' }}>ADMIN</span>}
             </div>
 
-            {/* Desktop Navigation Links */}
+            {/* Desktop/Tablet Dock Navigation */}
             <nav className="desktop-nav">
               {navItems.map(item => {
+                const Icon = item.icon
                 const isActive = pathname === item.path || (item.path !== '/dashboard' && pathname.startsWith(item.path))
                 return (
                   <button 
@@ -63,17 +68,20 @@ export default function Navigation({ role, username }: { role: string, username:
                     className={`desktop-nav-item ${isActive ? 'active' : ''}`}
                     onClick={() => router.push(item.path)}
                   >
-                    {item.label}
+                    <Icon size={18} />
+                    <span>{item.label}</span>
                   </button>
                 )
               })}
             </nav>
           </div>
           
-          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-            <span style={{ fontSize: '0.875rem', color: 'white', fontWeight: '500' }} className="hide-mobile">Hola, {username}</span>
-            <button className="btn-icon" onClick={handleLogout} title="Cerrar sesión" style={{ color: 'white', background: 'rgba(255,255,255,0.1)', borderRadius: '50%', cursor: 'pointer', border: 'none', display: 'flex', padding: '8px' }}>
-              <FiLogOut size={20} />
+          <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem' }}>
+            <div className="user-profile hide-mobile">
+              <span style={{ fontSize: '0.875rem', color: 'var(--text-primary)', fontWeight: '600' }}>{username}</span>
+            </div>
+            <button className="logout-btn" onClick={handleLogout} title="Cerrar sesión">
+              <FiLogOut size={18} />
             </button>
           </div>
         </div>
@@ -82,43 +90,51 @@ export default function Navigation({ role, username }: { role: string, username:
       <style jsx>{`
         .mobile-nav {
           position: fixed;
-          bottom: 0;
-          left: 0;
-          right: 0;
-          background: var(--bg-header);
-          backdrop-filter: blur(15px);
-          -webkit-backdrop-filter: blur(15px);
-          border-top: 1px solid var(--border);
+          bottom: 1rem;
+          left: 1rem;
+          right: 1rem;
+          border-radius: 24px;
           display: flex;
           justify-content: space-around;
-          padding: 0.75rem 0 calc(0.75rem + env(safe-area-inset-bottom));
-          z-index: 100;
+          padding: 0.75rem 0.5rem;
+          padding-bottom: calc(0.75rem + env(safe-area-inset-bottom));
+          z-index: 1000;
+          box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
         }
 
         .desktop-nav {
           display: none;
-          gap: 1rem;
+          background: rgba(255, 255, 255, 0.05);
+          padding: 6px;
+          border-radius: 14px;
+          gap: 4px;
+          border: 1px solid var(--border);
         }
 
         .desktop-nav-item {
           background: none;
           border: none;
-          color: #9ca3af;
-          font-weight: 500;
-          padding: 0.5rem 1rem;
+          color: var(--text-secondary);
+          font-weight: 600;
+          padding: 0.6rem 1rem;
+          font-size: 0.875rem;
           cursor: pointer;
-          transition: all 0.2s;
-          border-radius: var(--radius-sm);
+          transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+          border-radius: 10px;
+          display: flex;
+          align-items: center;
+          gap: 0.75rem;
         }
 
         .desktop-nav-item:hover {
-          color: white;
-          background: rgba(67, 56, 202, 0.1);
+          color: var(--text-primary);
+          background: rgba(255, 255, 255, 0.08);
         }
 
         .desktop-nav-item.active {
           color: white;
           background: var(--primary);
+          box-shadow: 0 4px 12px rgba(99, 102, 241, 0.25);
         }
         
         .mobile-nav-item {
@@ -128,34 +144,56 @@ export default function Navigation({ role, username }: { role: string, username:
           gap: 4px;
           background: none;
           border: none;
-          color: #9ca3af;
-          font-size: 0.75rem;
+          color: var(--text-secondary);
+          font-size: 0.65rem;
+          font-weight: 600;
           padding: 0.5rem;
+          flex: 1;
           cursor: pointer;
+          transition: all 0.25s ease;
+          border-radius: 16px;
+        }
+
+        .icon-wrapper {
+          padding: 8px;
+          border-radius: 12px;
+          display: flex;
           transition: all 0.2s ease;
-          border-radius: var(--radius-sm);
         }
         
         .mobile-nav-item.active {
-          color: white;
-          background: rgba(67, 56, 202, 0.2);
+          color: var(--primary);
+        }
+
+        .mobile-nav-item.active .icon-wrapper {
+          background: var(--primary-light);
+          transform: translateY(-4px);
         }
 
         .dashboard-header {
           position: sticky;
           top: 0;
-          height: 60px;
-          background: var(--bg-header);
-          backdrop-filter: blur(15px);
-          -webkit-backdrop-filter: blur(15px);
-          border-bottom: 1px solid var(--border);
-          z-index: 90;
+          height: 70px;
+          z-index: 900;
+        }
+
+        .logout-btn {
+          background: var(--danger-light);
+          color: var(--danger);
+          border: 1px solid var(--danger-light);
+          border-radius: 12px;
+          padding: 10px;
+          cursor: pointer;
+          display: flex;
+          transition: all 0.2s;
+        }
+
+        .logout-btn:hover {
+          background: var(--danger);
+          color: white;
         }
         
         @media (min-width: 768px) {
-          .dashboard-header {
-            height: 70px;
-          }
           .mobile-nav {
             display: none;
           }
@@ -164,16 +202,15 @@ export default function Navigation({ role, username }: { role: string, username:
           }
         }
 
+        @media (max-width: 1024px) {
+          .hide-tablet {
+            display: none;
+          }
+        }
+
         @media (max-width: 640px) {
           .hide-mobile {
             display: none;
-          }
-          .mobile-nav {
-            padding: 0.5rem 0 calc(0.5rem + env(safe-area-inset-bottom));
-          }
-          .mobile-nav-item {
-            padding: 0.25rem;
-            font-size: 0.7rem;
           }
         }
       `}</style>
