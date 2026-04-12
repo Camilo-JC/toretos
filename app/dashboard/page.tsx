@@ -206,20 +206,13 @@ export default async function DashboardPage() {
     }).format(num)
   }
 
-  const GrowthTag = ({ value }: { value: number }) => (
-    <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', color: value >= 0 ? '#10b981' : '#ef4444', fontSize: '0.875rem', fontWeight: 'bold' }}>
-      {value >= 0 ? <FiArrowUpRight /> : <FiArrowDownRight />}
-      {value > 0 ? '+' : ''}{value.toFixed(2)}%
-    </div>
-  )
 
-  const MetricItem = ({ title, value, growth, highlight = false, color = 'white' }: any) => (
+  const MetricItem = ({ title, value, highlight = false, color = 'white' }: any) => (
     <div className="dashboard-metric-item">
       <p style={{ color: '#9ca3af', fontSize: '0.875rem', fontWeight: '600', marginBottom: '0.5rem' }}>{title}</p>
-      <p style={{ fontSize: '1.75rem', fontWeight: 'bold', color: highlight ? 'var(--primary)' : color, marginBottom: '0.5rem' }}>
+      <p style={{ fontSize: '1.75rem', fontWeight: 'bold', color: highlight ? 'var(--primary)' : color, marginBottom: '0' }}>
         {formatCOP(value)}
       </p>
-      <GrowthTag value={growth} />
     </div>
   )
 
@@ -257,114 +250,71 @@ export default async function DashboardPage() {
 
       {/* 4 METRICS BANNER */}
       <div className="dashboard-metrics-container">
-        <MetricItem title="Plata que entró hoy" value={metrics.hoyEntradas} growth={metrics.hoyCrecimiento} highlight />
-        <MetricItem title="Ventas este Mes" value={metrics.mesActual} growth={metrics.mesCrecimiento} />
+        <MetricItem title="Plata que entró hoy" value={metrics.hoyEntradas} highlight />
+        <MetricItem title="Ventas este Mes" value={metrics.mesActual} />
         <div className="dashboard-metric-item">
           <p style={{ color: '#9ca3af', fontSize: '0.875rem', fontWeight: '600', marginBottom: '0.5rem' }}>Dinero en la Calle (Fiados)</p>
-          <p style={{ fontSize: '1.75rem', fontWeight: 'bold', color: 'var(--warning)', marginBottom: '0.5rem' }}>
+          <p style={{ fontSize: '1.75rem', fontWeight: 'bold', color: 'var(--warning)', marginBottom: '0' }}>
             {formatCOP(metrics.dineroEnCalle)}
           </p>
-          <GrowthTag value={metrics.moraCrecimiento} />
         </div>
-        <MetricItem title="Historial Total" value={metrics.totalHistorial} growth={metrics.historicoCrecimiento} />
+        <MetricItem title="Historial Total" value={metrics.totalHistorial} />
       </div>
 
-      <div className="dashboard-main-grid">
-        
-        <div style={{ backgroundColor: 'var(--bg-secondary)', borderRadius: 'var(--radius)', padding: '1.5rem', border: '1px solid var(--border)', boxShadow: '0 2px 8px rgba(0,0,0,0.05)' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
-            <h3 style={{ fontWeight: 'bold', color: 'white' }}>¿Cómo van las ventas?</h3>
-            <div style={{ border: '1px solid var(--border)', padding: '0.25rem 0.75rem', borderRadius: '4px', fontSize: '0.875rem', color: '#9ca3af' }}>
-              Último Semestre
-            </div>
+      <div className="animate-fade-in" style={{ 
+        display: 'grid', 
+        gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', 
+        gap: '2rem' 
+      }}>
+        {/* Productos por acabarse */}
+        <div style={{ backgroundColor: 'var(--bg-secondary)', borderRadius: 'var(--radius)', padding: '1.5rem', border: '1px solid var(--border)', borderLeft: '4px solid var(--danger)', height: 'fit-content' }}>
+          <h3 style={{ fontWeight: 'bold', color: 'white', marginBottom: '1rem', fontSize: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <FiBox color="var(--danger)" /> Productos por acabarse
+          </h3>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+            {lowStockProducts.length === 0 ? (
+              <p style={{ color: 'var(--success)', fontSize: '0.875rem' }}>Todo el inventario está al día.</p>
+            ) : (
+              lowStockProducts.map((p, i) => (
+                <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.875rem' }}>
+                  <span style={{ color: 'white' }}>{p.name}</span>
+                  <span style={{ backgroundColor: 'rgba(239, 68, 68, 0.1)', color: 'var(--danger)', padding: '2px 8px', borderRadius: '4px', fontWeight: 'bold' }}>
+                    {p.stock} uni.
+                  </span>
+                </div>
+              ))
+            )}
           </div>
+        </div>
+
+        {/* Cobros recientes */}
+        <div style={{ backgroundColor: 'var(--bg-secondary)', borderRadius: 'var(--radius)', padding: '1.5rem', border: '1px solid var(--border)', boxShadow: 'var(--shadow-sm)' }}>
+          <h3 style={{ fontWeight: 'bold', color: 'white', marginBottom: '1.5rem' }}>Cobros recientes</h3>
           
-          <div style={{ height: '300px', display: 'flex', alignItems: 'flex-end', justifyContent: 'space-around', position: 'relative', marginTop: '2rem', borderBottom: '2px solid #e5e7eb', marginLeft: '3.5rem' }}>
-            {/* Guias visuales horizontales DINAMICAS */}
-            {[1, 0.75, 0.5, 0.25].map((factor, idx) => {
-              const labelValue = currentMax * factor
-              return (
-                <div key={idx} style={{ position: 'absolute', top: `${(1 - factor) * 100}%`, left: 0, width: '100%', borderTop: '1px solid #374151', zIndex: 0 }}>
-                  <span style={{ position: 'absolute', top: '-10px', left: '-45px', fontSize: '0.75rem', color: '#9ca3af', width: '40px', textAlign: 'right' }}>{formatShortValue(labelValue)}</span>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+            {recentPurchases.length === 0 ? (
+              <p style={{ color: 'var(--text-secondary)' }}>No hay cobros recientes.</p>
+            ) : (
+              recentPurchases.map((r, i) => (
+                <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '1rem', borderBottom: i === recentPurchases.length - 1 ? 'none' : '1px solid var(--border)', paddingBottom: '1rem' }}>
+                  <div style={{ width: '40px', height: '40px', borderRadius: '50%', backgroundColor: r.type === 'ABONO' ? 'rgba(59, 130, 246, 0.1)' : 'rgba(16, 185, 129, 0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: r.type === 'ABONO' ? '#3b82f6' : '#10b981' }}>
+                    <FiShoppingBag />
+                  </div>
+                  <div style={{ flex: 1 }}>
+                    <p style={{ fontWeight: 'bold', color: 'white', fontSize: '0.9rem' }}>{r.name}</p>
+                    <p style={{ fontSize: '0.75rem', color: '#9ca3af' }}>{format(new Date(r.date), 'd MMM, p', { locale: es })} • <span style={{ color: r.type === 'ABONO' ? '#3b82f6' : '#10b981', fontWeight: 'bold' }}>{r.type}</span></p>
+                  </div>
+                  <p style={{ fontWeight: 'bold', color: '#10b981' }}>+{formatCOP(r.amount)}</p>
                 </div>
-              )
-            })}
-
-            {chartData.map((data, i) => {
-              const heightPercent = Math.max((data.value / data.maxValue) * 100, data.value > 0 ? 3 : 0)
-              const isCurrent = i === chartData.length - 1
-              return (
-                <div key={i} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.5rem', zIndex: 1, width: '60px' }}>
-                  <div style={{ 
-                    width: '40px', 
-                    height: `${heightPercent}%`, 
-                    background: isCurrent ? 'linear-gradient(180deg, var(--primary) 0%, #4338ca 100%)' : '#1e1b4b', 
-                    borderRadius: '6px 6px 0 0', 
-                    transition: 'height 1s ease-out',
-                    boxShadow: isCurrent ? '0 0 15px rgba(67, 56, 202, 0.4)' : 'none',
-                    position: 'relative'
-                  }}>
-                    {isCurrent && (
-                      <div style={{ position: 'absolute', top: '-25px', left: '50%', transform: 'translateX(-50%)', fontSize: '0.7rem', fontWeight: 'bold', color: 'var(--primary)', whiteSpace: 'nowrap' }}>
-                        {formatShortValue(data.value)}
-                      </div>
-                    )}
-                  </div>
-                  <span style={{ fontSize: '0.75rem', color: '#6b7280', marginTop: '0.5rem' }}>{data.month.split(' ')[0]}</span>
-                </div>
-              )
-            })}
+              ))
+            )}
           </div>
+
+          <Link href="/dashboard/history" style={{ width: '100%', marginTop: '1.5rem', padding: '0.75rem', border: 'none', backgroundColor: 'var(--border)', color: 'white', borderRadius: 'var(--radius)', fontWeight: 'bold', cursor: 'pointer', textAlign: 'center', display: 'block' }}>
+            Ver todo el historial
+          </Link>
         </div>
-
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
-          <div style={{ backgroundColor: 'var(--bg-secondary)', borderRadius: 'var(--radius)', padding: '1.5rem', border: '1px solid var(--border)', borderLeft: '4px solid var(--danger)' }}>
-            <h3 style={{ fontWeight: 'bold', color: 'white', marginBottom: '1rem', fontSize: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <FiBox color="var(--danger)" /> Productos por acabarse
-            </h3>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-              {lowStockProducts.length === 0 ? (
-                <p style={{ color: 'var(--success)', fontSize: '0.875rem' }}>Todo el inventario está al día.</p>
-              ) : (
-                lowStockProducts.map((p, i) => (
-                  <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.875rem' }}>
-                    <span style={{ color: 'white' }}>{p.name}</span>
-                    <span style={{ backgroundColor: 'rgba(239, 68, 68, 0.1)', color: 'var(--danger)', padding: '2px 8px', borderRadius: '4px', fontWeight: 'bold' }}>
-                      {p.stock} uni.
-                    </span>
-                  </div>
-                ))
-              )}
-            </div>
-          </div>
-
-          <div style={{ backgroundColor: 'var(--bg-secondary)', borderRadius: 'var(--radius)', padding: '1.5rem', border: '1px solid var(--border)', boxShadow: '0 2px 8px rgba(0,0,0,0.05)' }}>
-            <h3 style={{ fontWeight: 'bold', color: 'white', marginBottom: '1.5rem' }}>Cobros recientes</h3>
-            
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-              {recentPurchases.length === 0 ? (
-                <p style={{ color: 'var(--text-secondary)' }}>No hay cobros recientes.</p>
-              ) : (
-                recentPurchases.map((r, i) => (
-                  <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '1rem', borderBottom: i === recentPurchases.length - 1 ? 'none' : '1px solid var(--border)', paddingBottom: '1rem' }}>
-                    <div style={{ width: '40px', height: '40px', borderRadius: '50%', backgroundColor: r.type === 'ABONO' ? 'rgba(59, 130, 246, 0.1)' : 'rgba(16, 185, 129, 0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: r.type === 'ABONO' ? '#3b82f6' : '#10b981' }}>
-                      <FiShoppingBag />
-                    </div>
-                    <div style={{ flex: 1 }}>
-                      <p style={{ fontWeight: 'bold', color: 'white', fontSize: '0.9rem' }}>{r.name}</p>
-                      <p style={{ fontSize: '0.75rem', color: '#9ca3af' }}>{format(new Date(r.date), 'd MMM, p', { locale: es })} • <span style={{ color: r.type === 'ABONO' ? '#3b82f6' : '#10b981', fontWeight: 'bold' }}>{r.type}</span></p>
-                    </div>
-                    <p style={{ fontWeight: 'bold', color: '#10b981' }}>+{formatCOP(r.amount)}</p>
-                  </div>
-                ))
-              )}
-            </div>
-
-            <Link href="/dashboard/history" style={{ width: '100%', marginTop: '1.5rem', padding: '0.75rem', border: 'none', backgroundColor: '#374151', color: 'white', borderRadius: 'var(--radius)', fontWeight: 'bold', cursor: 'pointer', textAlign: 'center', display: 'block' }}>
-              Ver todo el historial
-            </Link>
-          </div>
-        </div>
+      </div>
 
       </div>
     </div>
