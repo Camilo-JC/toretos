@@ -38,7 +38,7 @@ export default function Navigation({ role, username }: { role: string, username:
               onClick={() => router.push(item.path)}
             >
               <div className="icon-wrapper">
-                <Icon size={22} />
+                <Icon size={20} />
               </div>
               <span>{item.label}</span>
             </button>
@@ -141,22 +141,23 @@ export default function Navigation({ role, username }: { role: string, username:
           display: flex;
           flex-direction: column;
           align-items: center;
-          gap: 4px;
+          gap: 2px;
           background: none;
           border: none;
           color: var(--text-secondary);
-          font-size: 0.65rem;
+          font-size: 0.6rem;
           font-weight: 600;
-          padding: 0.5rem;
+          padding: 0.4rem 0.2rem;
           flex: 1;
           cursor: pointer;
           transition: all 0.25s ease;
-          border-radius: 16px;
+          border-radius: 12px;
+          min-width: 0;
         }
 
         .icon-wrapper {
-          padding: 8px;
-          border-radius: 12px;
+          padding: 6px;
+          border-radius: 10px;
           display: flex;
           transition: all 0.2s ease;
         }

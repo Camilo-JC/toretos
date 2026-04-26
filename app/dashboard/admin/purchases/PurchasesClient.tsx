@@ -144,7 +144,7 @@ export default function PurchasesClient({
       {/* MODAL COMPRA */}
       {isPurchaseModalOpen && (
         <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.6)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 2000, padding: '1rem' }}>
-          <div className="card" style={{ width: '100%', maxWidth: '450px' }}>
+          <div className="card" style={{ width: '100%', maxWidth: '450px', maxHeight: '90vh', overflowY: 'auto' }}>
             <div className="card-header">
               <h3 style={{ fontWeight: 'bold' }}>Registrar Compra</h3>
               <button className="btn-icon" onClick={() => setIsPurchaseModalOpen(false)}>✕</button>
@@ -195,7 +195,7 @@ export default function PurchasesClient({
       {/* MODAL PROVEEDOR */}
       {isSupplierModalOpen && (
         <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.6)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 2000, padding: '1rem' }}>
-          <div className="card" style={{ width: '100%', maxWidth: '400px' }}>
+          <div className="card" style={{ width: '100%', maxWidth: '400px', maxHeight: '90vh', overflowY: 'auto' }}>
             <div className="card-header">
               <h3 style={{ fontWeight: 'bold' }}>Nuevo Proveedor</h3>
               <button className="btn-icon" onClick={() => setIsSupplierModalOpen(false)}>✕</button>
