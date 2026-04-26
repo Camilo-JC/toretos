@@ -11,7 +11,7 @@ export default function HistoryClient({ paidDebts }: { paidDebts: any[] }) {
 
   const formatCOP = (num: number) => {
     return new Intl.NumberFormat('es-CO', {
-      style: 'currency', currency: 'COP', minimumFractionDigits: 0
+      style: 'currency', currency: 'COP', minimumFractionDigits: 2
     }).format(num)
   }
 

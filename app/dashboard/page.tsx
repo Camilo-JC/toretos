@@ -202,7 +202,7 @@ export default async function DashboardPage() {
 
   const formatCOP = (num: number) => {
     return new Intl.NumberFormat('es-CO', {
-      style: 'currency', currency: 'COP', minimumFractionDigits: 0
+      style: 'currency', currency: 'COP', minimumFractionDigits: 2
     }).format(num)
   }
 
