@@ -21,6 +21,7 @@ const calcGrowth = (current: number, past: number) => {
 }
 
 export default async function DashboardPage() {
+  console.log(">>> DASHBOARD_V2_LOADED <<<")
   const session = (await getSession()) as unknown as AppSession
   const role = session?.role || 'WORKER'
   const adminName = (session?.username as string) || 'Admin'
@@ -245,7 +246,7 @@ export default async function DashboardPage() {
       <div className="page-header animate-fade-in" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '1.5rem' }}>
         <div className="page-header-info">
           <h1 style={{ fontSize: '2.5rem', fontWeight: '900', letterSpacing: '-0.04em', marginBottom: '0.5rem' }}>
-            Panel de Control
+            Panel de Control ✨
           </h1>
           <p style={{ color: 'var(--text-secondary)', fontSize: '1.1rem' }}>Resumen financiero de <strong>Los Toreto</strong> para {format(new Date(), "MMMM d, yyyy", { locale: es })}.</p>
         </div>
