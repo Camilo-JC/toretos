@@ -1,7 +1,7 @@
 'use client'
 
 import { useRouter, usePathname } from 'next/navigation'
-import { FiHome, FiBox, FiUsers, FiSettings, FiLogOut, FiFileText } from 'react-icons/fi'
+import { FiHome, FiBox, FiUsers, FiSettings, FiLogOut, FiFileText, FiTruck } from 'react-icons/fi'
 
 export default function Navigation({ role, username }: { role: string, username: string }) {
   const router = useRouter()
@@ -20,6 +20,7 @@ export default function Navigation({ role, username }: { role: string, username:
   ]
 
   if (role === 'ADMIN') {
+    navItems.push({ label: 'Compras', path: '/dashboard/admin/purchases', icon: FiTruck })
     navItems.push({ label: 'Config', path: '/dashboard/settings', icon: FiSettings })
   }
 

@@ -36,10 +36,12 @@ model Product {
   name        String
   description String?
   price       Float
-  stock       Int      @default(0)
+  unit        String   @default("UNIDAD") // UNIDAD, LB, KG, etc.
+  stock       Float    @default(0)        // Cambiado a Float para soportar stock en libras/kilos
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   debtItems   DebtItem[]
+  purchases   Purchase[]
 }
 
 model Debt {
@@ -62,8 +64,32 @@ model DebtItem {
   product     Product? @relation(fields: [productId], references: [id])
   productId   String?
   description String?
-  quantity    Int      @default(1)
+  quantity    Float    @default(1) // Cambiado a Float para soportar pesos
   price       Float    // price at the moment of adding to debt
+  createdAt   DateTime @default(now())
+}
+
+model Supplier {
+  id        String     @id @default(cuid())
+  name      String
+  contact   String?
+  phone     String?
+  email     String?
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  purchases Purchase[]
+}
+
+model Purchase {
+  id          String   @id @default(cuid())
+  product     Product  @relation(fields: [productId], references: [id])
+  productId   String
+  supplier    Supplier @relation(fields: [supplierId], references: [id])
+  supplierId  String
+  quantity    Float
+  unitCost    Float
+  totalCost   Float
+  date        DateTime @default(now())
   createdAt   DateTime @default(now())
 }
 

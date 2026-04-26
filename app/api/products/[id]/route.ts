@@ -15,6 +15,7 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
       name: data.name,
       description: data.description || null,
       price: data.price,
+      unit: data.unit || 'UNIDAD',
       stock: data.stock
     }
   })

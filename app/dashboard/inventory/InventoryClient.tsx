@@ -9,6 +9,7 @@ type Product = {
   description: string | null
   price: number
   stock: number
+  unit: string
 }
 
 export default function InventoryClient({ initialProducts, role }: { initialProducts: Product[], role: string }) {
@@ -16,7 +17,7 @@ export default function InventoryClient({ initialProducts, role }: { initialProd
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [loading, setLoading] = useState(false)
 
-  const [formData, setFormData] = useState({ id: '', name: '', description: '', price: 0, stock: 0 })
+  const [formData, setFormData] = useState({ id: '', name: '', description: '', price: 0, stock: 0, unit: 'UNIDAD' })
 
   const formatCOP = (num: number) => {
     return new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', minimumFractionDigits: 2 }).format(num)
@@ -24,9 +25,16 @@ export default function InventoryClient({ initialProducts, role }: { initialProd
 
   const openModal = (product?: Product) => {
     if (product) {
-      setFormData({ id: product.id, name: product.name, description: product.description || '', price: product.price, stock: product.stock })
+      setFormData({ 
+        id: product.id, 
+        name: product.name, 
+        description: product.description || '', 
+        price: product.price, 
+        stock: product.stock,
+        unit: product.unit || 'UNIDAD'
+      })
     } else {
-      setFormData({ id: '', name: '', description: '', price: 0, stock: 0 })
+      setFormData({ id: '', name: '', description: '', price: 0, stock: 0, unit: 'UNIDAD' })
     }
     setIsModalOpen(true)
   }
@@ -98,7 +106,7 @@ export default function InventoryClient({ initialProducts, role }: { initialProd
                 </div>
                 
                 <span className={`badge ${p.stock > 10 ? 'badge-success' : p.stock > 0 ? 'badge-warning' : 'badge-danger'}`} style={{ alignSelf: 'flex-start', fontSize: '0.7rem' }}>
-                  Stock: {p.stock}
+                  Stock: {p.stock} {p.unit}
                 </span>
 
                 <p style={{ color: 'var(--text-secondary)', fontSize: '0.75rem', flexGrow: 1, margin: '0.25rem 0' }}>
@@ -107,7 +115,7 @@ export default function InventoryClient({ initialProducts, role }: { initialProd
 
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 'auto' }}>
                   <span style={{ fontSize: '1rem', fontWeight: 'bold', color: 'var(--primary)' }}>
-                    {formatCOP(p.price).split(',')[0]}
+                    {formatCOP(p.price).split(',')[0]} <small style={{ fontSize: '0.65rem' }}>/ {p.unit}</small>
                   </span>
                   
                   {role === 'ADMIN' && (
@@ -147,13 +155,23 @@ export default function InventoryClient({ initialProducts, role }: { initialProd
                 </div>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
                   <div className="input-group">
-                    <label>Precio de Venta</label>
+                    <label>Precio por {formData.unit}</label>
                     <input className="input-control" type="number" min="0" value={formData.price} onChange={e => setFormData({...formData, price: Number(e.target.value)})} required />
                   </div>
                   <div className="input-group">
-                    <label>Stock</label>
-                    <input className="input-control" type="number" min="0" value={formData.stock} onChange={e => setFormData({...formData, stock: Number(e.target.value)})} required />
+                    <label>Unidad de Medida</label>
+                    <select className="input-control" value={formData.unit} onChange={e => setFormData({...formData, unit: e.target.value})} required>
+                      <option value="UNIDAD">UNIDAD</option>
+                      <option value="LB">LIBRA (LB)</option>
+                      <option value="KG">KILO (KG)</option>
+                      <option value="ARROBA">ARROBA (@)</option>
+                      <option value="BTO">BULTO (BTO)</option>
+                    </select>
                   </div>
+                </div>
+                <div className="input-group">
+                  <label>Stock Actual ({formData.unit})</label>
+                  <input className="input-control" type="number" step="0.01" min="0" value={formData.stock} onChange={e => setFormData({...formData, stock: Number(e.target.value)})} required />
                 </div>
                 <button className="btn btn-primary" type="submit" disabled={loading} style={{ width: '100%', marginTop: '0.5rem' }}>
                   {loading ? 'Guardando...' : 'Guardar Producto'}

@@ -45,6 +45,8 @@ export default function CustomersClient({ initialCustomers, role, inventory }: {
   const [showDetail, setShowDetail] = useState(false)
 
   const [loading, setLoading] = useState(false)
+  const [cart, setCart] = useState<{ productId: string, name: string, quantity: number, price: number, unit: string }[]>([])
+  const [searchTerm, setSearchTerm] = useState('')
 
   const formatCOP = (num: number) => {
     return new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', minimumFractionDigits: 2 }).format(num)
@@ -76,7 +78,12 @@ export default function CustomersClient({ initialCustomers, role, inventory }: {
 
     let payload: any = {}
     if (fiadoMode === 'inventory') {
-      payload = { isGeneric: false, isAbono: false, ...fiadoForm }
+      if (cart.length === 0) {
+        alert('Agregue al menos un producto al carrito')
+        setLoading(false)
+        return
+      }
+      payload = { isGeneric: false, isAbono: false, items: cart }
     } else if (fiadoMode === 'generic') {
       payload = { isGeneric: true, isAbono: false, description: genericForm.description, amount: Number(genericForm.amount) }
     } else {
@@ -103,6 +110,7 @@ export default function CustomersClient({ initialCustomers, role, inventory }: {
       setCustomers(customers.map(c => c.id === updatedCustomer.id ? updatedCustomer : c))
       setSelectedCustomer(updatedCustomer)
       setIsFiadoOpen(false)
+      setCart([])
       setFiadoForm({ productId: '', quantity: 1 })
       setGenericForm({ 
         description: format(new Date(), "EEEE d 'de' MMMM", { locale: es }), 
@@ -411,20 +419,77 @@ export default function CustomersClient({ initialCustomers, role, inventory }: {
                 {fiadoMode === 'inventory' ? (
                   <>
                     <div className="input-group">
-                      <label>Seleccionar Producto</label>
-                      <select className="input-control" value={fiadoForm.productId} onChange={e => setFiadoForm({...fiadoForm, productId: e.target.value})} required>
-                        <option value="" disabled>-- Elige del inventario --</option>
-                        {inventory.map(prod => (
-                          <option key={prod.id} value={prod.id} disabled={prod.stock < 1}>
-                            {prod.name} ({formatCOP(prod.price)}) {prod.stock < 1 && '- Agotado'}
-                          </option>
-                        ))}
-                      </select>
+                      <label>Buscar Producto</label>
+                      <input 
+                        className="input-control" 
+                        placeholder="Ej: Papa, Aceite..." 
+                        value={searchTerm} 
+                        onChange={e => setSearchTerm(e.target.value)}
+                      />
                     </div>
-                    <div className="input-group">
-                      <label>Cantidad</label>
-                      <input className="input-control" type="number" min="1" value={fiadoForm.quantity} onChange={e => setFiadoForm({...fiadoForm, quantity: Number(e.target.value)})} required />
-                    </div>
+
+                    {searchTerm.length > 1 && (
+                      <div style={{ maxHeight: '150px', overflowY: 'auto', border: '1px solid var(--border)', borderRadius: 'var(--radius-sm)', marginBottom: '1rem' }}>
+                        {inventory
+                          .filter(p => p.name.toLowerCase().includes(searchTerm.toLowerCase()))
+                          .map(prod => (
+                            <div 
+                              key={prod.id} 
+                              onClick={() => {
+                                if (prod.stock <= 0) return
+                                const existing = cart.find(c => c.productId === prod.id)
+                                if (existing) {
+                                  setCart(cart.map(c => c.productId === prod.id ? {...c, quantity: c.quantity + 1} : c))
+                                } else {
+                                  setCart([...cart, { productId: prod.id, name: prod.name, quantity: 1, price: prod.price, unit: (prod as any).unit || 'UND' }])
+                                }
+                                setSearchTerm('')
+                              }}
+                              style={{ 
+                                padding: '0.75rem', 
+                                borderBottom: '1px solid var(--border)', 
+                                cursor: prod.stock > 0 ? 'pointer' : 'not-allowed',
+                                opacity: prod.stock > 0 ? 1 : 0.5,
+                                display: 'flex',
+                                justifyContent: 'space-between'
+                              }}
+                            >
+                              <span>{prod.name}</span>
+                              <span style={{ fontWeight: 'bold' }}>{formatCOP(prod.price)} / {(prod as any).unit || 'UND'}</span>
+                            </div>
+                          ))}
+                      </div>
+                    )}
+
+                    {cart.length > 0 && (
+                      <div style={{ marginBottom: '1.5rem' }}>
+                        <label style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginBottom: '0.5rem', display: 'block' }}>Carrito Actual</label>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                          {cart.map((item, idx) => (
+                            <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', backgroundColor: 'var(--bg-main)', padding: '0.5rem', borderRadius: '8px' }}>
+                              <div style={{ flex: 1 }}>
+                                <div style={{ fontSize: '0.875rem', fontWeight: 'bold' }}>{item.name}</div>
+                                <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>{formatCOP(item.price)} / {item.unit}</div>
+                              </div>
+                              <input 
+                                className="input-control" 
+                                type="number" 
+                                step="0.01" 
+                                style={{ width: '70px', padding: '0.25rem' }} 
+                                value={item.quantity} 
+                                onChange={e => setCart(cart.map((c, i) => i === idx ? {...c, quantity: Number(e.target.value)} : c))}
+                              />
+                              <button type="button" onClick={() => setCart(cart.filter((_, i) => i !== idx))} style={{ color: 'var(--danger)', background: 'none', border: 'none', cursor: 'pointer' }}>
+                                <FiTrash2 size={16} />
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+                        <div style={{ marginTop: '1rem', textAlign: 'right', fontWeight: 'bold', fontSize: '1.1rem', borderTop: '2px solid var(--primary-light)', paddingTop: '0.5rem' }}>
+                          Subtotal: {formatCOP(cart.reduce((acc, curr) => acc + (curr.price * curr.quantity), 0))}
+                        </div>
+                      </div>
+                    )}
                   </>
                 ) : fiadoMode === 'generic' ? (
                   <>
@@ -449,8 +514,8 @@ export default function CustomersClient({ initialCustomers, role, inventory }: {
                   </>
                 )}
                 
-                <button className="btn btn-primary" type="submit" disabled={loading} style={{ width: '100%', marginTop: '0.5rem' }}>
-                  {loading ? 'Registrando...' : 'Agregar a la cuenta'}
+                <button className="btn btn-primary" type="submit" disabled={loading || (fiadoMode === 'inventory' && cart.length === 0)} style={{ width: '100%', marginTop: '0.5rem' }}>
+                  {loading ? 'Registrando...' : 'Registrar Venta Multi-Artículo'}
                 </button>
               </form>
             </div>

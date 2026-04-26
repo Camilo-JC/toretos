@@ -12,6 +12,7 @@ export async function POST(request: Request) {
       name: data.name,
       description: data.description || null,
       price: data.price,
+      unit: data.unit || 'UNIDAD',
       stock: data.stock
     }
   })
