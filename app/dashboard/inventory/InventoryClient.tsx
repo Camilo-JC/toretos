@@ -164,8 +164,6 @@ export default function InventoryClient({ initialProducts, role }: { initialProd
                       <option value="UNIDAD">UNIDAD</option>
                       <option value="LB">LIBRA (LB)</option>
                       <option value="KG">KILO (KG)</option>
-                      <option value="ARROBA">ARROBA (@)</option>
-                      <option value="BTO">BULTO (BTO)</option>
                     </select>
                   </div>
                 </div>
