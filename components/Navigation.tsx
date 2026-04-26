@@ -180,8 +180,8 @@ export default function Navigation({ role, username }: { role: string, username:
 
         @media (max-width: 640px) {
           .dashboard-header {
-            height: 110px;
-            padding-top: env(safe-area-inset-top, 35px);
+            height: 140px;
+            padding-top: env(safe-area-inset-top, 60px);
           }
         }
 

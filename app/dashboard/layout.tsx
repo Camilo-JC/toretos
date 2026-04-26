@@ -16,7 +16,7 @@ export default async function DashboardLayout({
   return (
     <div style={{ paddingBottom: '70px' }}>
       <Navigation role={session.role as string} username={session.username as string} />
-      <div className="container" style={{ paddingTop: 'clamp(2.5rem, 8vw, 4rem)', paddingBottom: '1.5rem' }}>
+      <div className="container" style={{ paddingTop: 'clamp(5rem, 12vw, 6rem)', paddingBottom: '1.5rem' }}>
         {children}
       </div>
     </div>
