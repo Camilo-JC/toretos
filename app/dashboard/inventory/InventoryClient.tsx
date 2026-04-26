@@ -17,7 +17,7 @@ export default function InventoryClient({ initialProducts, role }: { initialProd
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [loading, setLoading] = useState(false)
 
-  const [formData, setFormData] = useState({ id: '', name: '', description: '', price: 0, stock: 0, unit: 'UNIDAD' })
+  const [formData, setFormData] = useState<any>({ id: '', name: '', description: '', price: '', stock: '', unit: 'UNIDAD' })
 
   const formatCOP = (num: number) => {
     return new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', minimumFractionDigits: 2 }).format(num)
@@ -34,7 +34,7 @@ export default function InventoryClient({ initialProducts, role }: { initialProd
         unit: product.unit || 'UNIDAD'
       })
     } else {
-      setFormData({ id: '', name: '', description: '', price: 0, stock: 0, unit: 'UNIDAD' })
+      setFormData({ id: '', name: '', description: '', price: '', stock: '', unit: 'UNIDAD' })
     }
     setIsModalOpen(true)
   }
@@ -49,7 +49,11 @@ export default function InventoryClient({ initialProducts, role }: { initialProd
     const res = await fetch(url, {
       method,
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(formData)
+      body: JSON.stringify({
+        ...formData,
+        price: Number(formData.price),
+        stock: Number(formData.stock)
+      })
     })
 
     if (res.ok) {
@@ -156,7 +160,18 @@ export default function InventoryClient({ initialProducts, role }: { initialProd
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
                   <div className="input-group">
                     <label>Precio por {formData.unit}</label>
-                    <input className="input-control" type="number" min="0" value={formData.price} onChange={e => setFormData({...formData, price: e.target.value === '' ? '' as any : Number(e.target.value)})} required />
+                    <input 
+                      className="input-control" 
+                      type="text" 
+                      inputMode="numeric" 
+                      placeholder="0"
+                      value={formData.price} 
+                      onChange={e => {
+                        const val = e.target.value.replace(/\D/g, '');
+                        setFormData({...formData, price: val})
+                      }} 
+                      required 
+                    />
                   </div>
                   <div className="input-group">
                     <label>Unidad de Medida</label>
@@ -169,7 +184,20 @@ export default function InventoryClient({ initialProducts, role }: { initialProd
                 </div>
                 <div className="input-group">
                   <label>Stock Actual ({formData.unit})</label>
-                  <input className="input-control" type="number" step={formData.unit === 'UNIDAD' ? "1" : "0.01"} min="0" value={formData.stock} onChange={e => setFormData({...formData, stock: e.target.value === '' ? '' as any : Number(e.target.value)})} required />
+                  <input 
+                    className="input-control" 
+                    type="text" 
+                    inputMode="decimal" 
+                    placeholder="0"
+                    value={formData.stock} 
+                    onChange={e => {
+                      const val = e.target.value.replace(',', '.');
+                      if (val === '' || !isNaN(Number(val))) {
+                        setFormData({...formData, stock: val})
+                      }
+                    }} 
+                    required 
+                  />
                 </div>
                 <button className="btn btn-primary" type="submit" disabled={loading} style={{ width: '100%', marginTop: '0.5rem' }}>
                   {loading ? 'Guardando...' : 'Guardar Producto'}

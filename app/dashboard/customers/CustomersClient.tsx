@@ -473,11 +473,16 @@ export default function CustomersClient({ initialCustomers, role, inventory }: {
                               </div>
                               <input 
                                 className="input-control" 
-                                type="number" 
-                                step={item.unit === 'UNIDAD' ? "1" : "0.01"} 
+                                type="text"
+                                inputMode="decimal"
                                 style={{ width: '70px', padding: '0.25rem' }} 
                                 value={item.quantity} 
-                                onChange={e => setCart(cart.map((c, i) => i === idx ? {...c, quantity: e.target.value === '' ? '' as any : Number(e.target.value)} : c))}
+                                onChange={e => {
+                                  const val = e.target.value.replace(',', '.');
+                                  if (val === '' || !isNaN(Number(val))) {
+                                    setCart(cart.map((c, i) => i === idx ? {...c, quantity: val} : c))
+                                  }
+                                }}
                               />
                               <button type="button" onClick={() => setCart(cart.filter((_, i) => i !== idx))} style={{ color: 'var(--danger)', background: 'none', border: 'none', cursor: 'pointer' }}>
                                 <FiTrash2 size={16} />
@@ -499,14 +504,20 @@ export default function CustomersClient({ initialCustomers, role, inventory }: {
                     </div>
                     <div className="input-group">
                       <label>Monto Total ($)</label>
-                      <input className="input-control" type="number" min="1" placeholder="Ej. 23500" value={genericForm.amount} onChange={e => setGenericForm({...genericForm, amount: e.target.value === '' ? '' as any : e.target.value})} required />
+                      <input className="input-control" type="text" inputMode="numeric" placeholder="Ej. 23500" value={genericForm.amount} onChange={e => {
+                        const val = e.target.value.replace(/\D/g, '');
+                        setGenericForm({...genericForm, amount: val})
+                      }} required />
                     </div>
                   </>
                 ) : (
                   <>
                     <div className="input-group">
                       <label>Cantidad a Abonar ($)</label>
-                      <input className="input-control" type="number" min="1" placeholder="Ej. 10000" value={abonoForm.amount} onChange={e => setAbonoForm({...abonoForm, amount: e.target.value === '' ? '' as any : e.target.value})} required />
+                      <input className="input-control" type="text" inputMode="numeric" placeholder="Ej. 10000" value={abonoForm.amount} onChange={e => {
+                        const val = e.target.value.replace(/\D/g, '');
+                        setAbonoForm({...abonoForm, amount: val})
+                      }} required />
                     </div>
                     <div style={{ padding: '0.75rem', backgroundColor: 'rgba(16, 185, 129, 0.1)', color: 'var(--success)', borderRadius: 'var(--radius-sm)', fontSize: '0.875rem' }}>
                       Este monto se restará inmediatamente a la deuda acumulada de su cuenta de forma limpia.

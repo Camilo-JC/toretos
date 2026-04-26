@@ -32,11 +32,11 @@ export default function PurchasesClient({
   const [isSupplierModalOpen, setIsSupplierModalOpen] = useState(false)
   const [loading, setLoading] = useState(false)
 
-  const [purchaseForm, setPurchaseForm] = useState({ 
+  const [purchaseForm, setPurchaseForm] = useState<any>({ 
     productId: '', 
     supplierId: '', 
-    quantity: 0, 
-    unitCost: 0, 
+    quantity: '', 
+    unitCost: '', 
     date: format(new Date(), 'yyyy-MM-dd') 
   })
 
@@ -71,7 +71,11 @@ export default function PurchasesClient({
     const res = await fetch('/api/admin/purchases', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(purchaseForm)
+      body: JSON.stringify({
+        ...purchaseForm,
+        quantity: Number(purchaseForm.quantity),
+        unitCost: Number(purchaseForm.unitCost)
+      })
     })
     if (res.ok) {
       const saved = await res.json()
@@ -80,7 +84,7 @@ export default function PurchasesClient({
       const updatedP = await resP.json()
       setPurchases(updatedP)
       setIsPurchaseModalOpen(false)
-      setPurchaseForm({ productId: '', supplierId: '', quantity: 0, unitCost: 0, date: format(new Date(), 'yyyy-MM-dd') })
+      setPurchaseForm({ productId: '', supplierId: '', quantity: '', unitCost: '', date: format(new Date(), 'yyyy-MM-dd') })
     } else {
       const err = await res.json()
       alert(err.error || 'Error registrando compra')
@@ -170,16 +174,33 @@ export default function PurchasesClient({
                     <label>Cantidad</label>
                     <input 
                       className="input-control" 
-                      type="number" 
-                      step={products.find(p => p.id === purchaseForm.productId)?.unit === 'UNIDAD' ? "1" : "0.01"} 
+                      type="text" 
+                      inputMode="decimal" 
+                      placeholder="0"
                       value={purchaseForm.quantity} 
-                      onChange={e => setPurchaseForm({...purchaseForm, quantity: e.target.value === '' ? '' as any : Number(e.target.value)})} 
+                      onChange={e => {
+                        const val = e.target.value.replace(',', '.');
+                        if (val === '' || !isNaN(Number(val))) {
+                          setPurchaseForm({...purchaseForm, quantity: val})
+                        }
+                      }} 
                       required 
                     />
                   </div>
                   <div className="input-group">
                     <label>Costo Unitario ($)</label>
-                    <input className="input-control" type="number" value={purchaseForm.unitCost} onChange={e => setPurchaseForm({...purchaseForm, unitCost: e.target.value === '' ? '' as any : Number(e.target.value)})} required />
+                    <input 
+                      className="input-control" 
+                      type="text" 
+                      inputMode="numeric" 
+                      placeholder="0"
+                      value={purchaseForm.unitCost} 
+                      onChange={e => {
+                        const val = e.target.value.replace(/\D/g, '');
+                        setPurchaseForm({...purchaseForm, unitCost: val})
+                      }} 
+                      required 
+                    />
                   </div>
                 </div>
                 <div className="input-group">
