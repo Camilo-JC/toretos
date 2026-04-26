@@ -156,7 +156,7 @@ export default function InventoryClient({ initialProducts, role }: { initialProd
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
                   <div className="input-group">
                     <label>Precio por {formData.unit}</label>
-                    <input className="input-control" type="number" min="0" value={formData.price} onChange={e => setFormData({...formData, price: Number(e.target.value)})} required />
+                    <input className="input-control" type="number" min="0" value={formData.price} onChange={e => setFormData({...formData, price: e.target.value === '' ? '' as any : Number(e.target.value)})} required />
                   </div>
                   <div className="input-group">
                     <label>Unidad de Medida</label>
@@ -169,7 +169,7 @@ export default function InventoryClient({ initialProducts, role }: { initialProd
                 </div>
                 <div className="input-group">
                   <label>Stock Actual ({formData.unit})</label>
-                  <input className="input-control" type="number" step={formData.unit === 'UNIDAD' ? "1" : "0.01"} min="0" value={formData.stock} onChange={e => setFormData({...formData, stock: Number(e.target.value)})} required />
+                  <input className="input-control" type="number" step={formData.unit === 'UNIDAD' ? "1" : "0.01"} min="0" value={formData.stock} onChange={e => setFormData({...formData, stock: e.target.value === '' ? '' as any : Number(e.target.value)})} required />
                 </div>
                 <button className="btn btn-primary" type="submit" disabled={loading} style={{ width: '100%', marginTop: '0.5rem' }}>
                   {loading ? 'Guardando...' : 'Guardar Producto'}

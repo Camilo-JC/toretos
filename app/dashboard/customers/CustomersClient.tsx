@@ -477,7 +477,7 @@ export default function CustomersClient({ initialCustomers, role, inventory }: {
                                 step={item.unit === 'UNIDAD' ? "1" : "0.01"} 
                                 style={{ width: '70px', padding: '0.25rem' }} 
                                 value={item.quantity} 
-                                onChange={e => setCart(cart.map((c, i) => i === idx ? {...c, quantity: Number(e.target.value)} : c))}
+                                onChange={e => setCart(cart.map((c, i) => i === idx ? {...c, quantity: e.target.value === '' ? '' as any : Number(e.target.value)} : c))}
                               />
                               <button type="button" onClick={() => setCart(cart.filter((_, i) => i !== idx))} style={{ color: 'var(--danger)', background: 'none', border: 'none', cursor: 'pointer' }}>
                                 <FiTrash2 size={16} />
@@ -499,14 +499,14 @@ export default function CustomersClient({ initialCustomers, role, inventory }: {
                     </div>
                     <div className="input-group">
                       <label>Monto Total ($)</label>
-                      <input className="input-control" type="number" min="1" placeholder="Ej. 23500" value={genericForm.amount} onChange={e => setGenericForm({...genericForm, amount: e.target.value})} required />
+                      <input className="input-control" type="number" min="1" placeholder="Ej. 23500" value={genericForm.amount} onChange={e => setGenericForm({...genericForm, amount: e.target.value === '' ? '' as any : e.target.value})} required />
                     </div>
                   </>
                 ) : (
                   <>
                     <div className="input-group">
                       <label>Cantidad a Abonar ($)</label>
-                      <input className="input-control" type="number" min="1" placeholder="Ej. 10000" value={abonoForm.amount} onChange={e => setAbonoForm({...abonoForm, amount: e.target.value})} required />
+                      <input className="input-control" type="number" min="1" placeholder="Ej. 10000" value={abonoForm.amount} onChange={e => setAbonoForm({...abonoForm, amount: e.target.value === '' ? '' as any : e.target.value})} required />
                     </div>
                     <div style={{ padding: '0.75rem', backgroundColor: 'rgba(16, 185, 129, 0.1)', color: 'var(--success)', borderRadius: 'var(--radius-sm)', fontSize: '0.875rem' }}>
                       Este monto se restará inmediatamente a la deuda acumulada de su cuenta de forma limpia.

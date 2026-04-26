@@ -173,13 +173,13 @@ export default function PurchasesClient({
                       type="number" 
                       step={products.find(p => p.id === purchaseForm.productId)?.unit === 'UNIDAD' ? "1" : "0.01"} 
                       value={purchaseForm.quantity} 
-                      onChange={e => setPurchaseForm({...purchaseForm, quantity: Number(e.target.value)})} 
+                      onChange={e => setPurchaseForm({...purchaseForm, quantity: e.target.value === '' ? '' as any : Number(e.target.value)})} 
                       required 
                     />
                   </div>
                   <div className="input-group">
                     <label>Costo Unitario ($)</label>
-                    <input className="input-control" type="number" value={purchaseForm.unitCost} onChange={e => setPurchaseForm({...purchaseForm, unitCost: Number(e.target.value)})} required />
+                    <input className="input-control" type="number" value={purchaseForm.unitCost} onChange={e => setPurchaseForm({...purchaseForm, unitCost: e.target.value === '' ? '' as any : Number(e.target.value)})} required />
                   </div>
                 </div>
                 <div className="input-group">
