@@ -176,6 +176,13 @@ export default function Navigation({ role, username }: { role: string, username:
           z-index: 900;
         }
 
+        @media (max-width: 640px) {
+          .dashboard-header {
+            height: 90px;
+            padding-top: env(safe-area-inset-top, 10px);
+          }
+        }
+
         .logout-btn {
           background: var(--danger-light);
           color: var(--danger);

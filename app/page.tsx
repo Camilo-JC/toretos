@@ -60,7 +60,7 @@ export default function LoginPage() {
       })
       if (res.ok) {
         setRecoveryStep(2)
-        setRecoveryMessage('Si el usuario existe, se envió un código al administrador.')
+        setRecoveryMessage(' El usuario existe, se envió un código al administrador.')
       } else {
         setRecoveryMessage('Error enviando el código.')
       }
@@ -109,7 +109,7 @@ export default function LoginPage() {
             {/* El borde circular que se mueve */}
             <div className="spinning-border"></div>
             <div className="loading-logo-inner">
-              <img src="/icon-512.png" alt="Loading Logo" className="loading-logo-img" />
+              <img src="/logo-toreto.ico" alt="Loading Logo" className="loading-logo-img" />
             </div>
           </div>
           <p className="loading-text">Verificando Credenciales...</p>
@@ -120,7 +120,7 @@ export default function LoginPage() {
         <div className="card login-card animate-slide-up">
           <div className="card-header" style={{ justifyContent: 'center', flexDirection: 'column', gap: '1rem', padding: '2rem 1.5rem 1rem' }}>
             <div className="login-logo-wrapper">
-              <img src="/icon-512.png" alt="Logo" style={{ width: '80px', height: '80px', borderRadius: '12px', boxShadow: '0 0 20px rgba(67, 56, 202, 0.3)' }} />
+              <img src="/logo-toreto.ico" alt="Logo" style={{ width: '80px', height: '80px', borderRadius: '12px', boxShadow: '0 0 20px rgba(67, 56, 202, 0.3)' }} />
             </div>
             <div style={{ textAlign: 'center' }}>
               <h1 style={{ color: 'white', marginBottom: '0.25rem', fontSize: '2rem', fontWeight: '800', letterSpacing: '-0.025em' }}>Los Toreto</h1>
@@ -189,7 +189,7 @@ export default function LoginPage() {
           </div>
         </div>
         <p style={{ marginTop: '2rem', color: '#4b5563', fontSize: '0.75rem', textAlign: 'center' }}>
-          Seguridad de Grado Militar Activada • Los Toreto v3.0
+          La mejor tienda de Colombia
         </p>
       </div>
 
