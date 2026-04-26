@@ -474,7 +474,7 @@ export default function CustomersClient({ initialCustomers, role, inventory }: {
                               <input 
                                 className="input-control" 
                                 type="number" 
-                                step="0.01" 
+                                step={item.unit === 'UNIDAD' ? "1" : "0.01"} 
                                 style={{ width: '70px', padding: '0.25rem' }} 
                                 value={item.quantity} 
                                 onChange={e => setCart(cart.map((c, i) => i === idx ? {...c, quantity: Number(e.target.value)} : c))}

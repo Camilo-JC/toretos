@@ -168,7 +168,14 @@ export default function PurchasesClient({
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
                   <div className="input-group">
                     <label>Cantidad</label>
-                    <input className="input-control" type="number" step="0.01" value={purchaseForm.quantity} onChange={e => setPurchaseForm({...purchaseForm, quantity: Number(e.target.value)})} required />
+                    <input 
+                      className="input-control" 
+                      type="number" 
+                      step={products.find(p => p.id === purchaseForm.productId)?.unit === 'UNIDAD' ? "1" : "0.01"} 
+                      value={purchaseForm.quantity} 
+                      onChange={e => setPurchaseForm({...purchaseForm, quantity: Number(e.target.value)})} 
+                      required 
+                    />
                   </div>
                   <div className="input-group">
                     <label>Costo Unitario ($)</label>

@@ -169,7 +169,7 @@ export default function InventoryClient({ initialProducts, role }: { initialProd
                 </div>
                 <div className="input-group">
                   <label>Stock Actual ({formData.unit})</label>
-                  <input className="input-control" type="number" step="0.01" min="0" value={formData.stock} onChange={e => setFormData({...formData, stock: Number(e.target.value)})} required />
+                  <input className="input-control" type="number" step={formData.unit === 'UNIDAD' ? "1" : "0.01"} min="0" value={formData.stock} onChange={e => setFormData({...formData, stock: Number(e.target.value)})} required />
                 </div>
                 <button className="btn btn-primary" type="submit" disabled={loading} style={{ width: '100%', marginTop: '0.5rem' }}>
                   {loading ? 'Guardando...' : 'Guardar Producto'}
